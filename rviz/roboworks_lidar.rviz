@@ -46,7 +46,7 @@ Visualization Manager:
       Name: RobotModel
       Description Source: Parameter
       Description Parameter Name:
-        Value: robot_description
+        Value: /robot_description
       Alpha: 1.0
     - Class: rviz_default_plugins/LaserScan
       Enabled: true
