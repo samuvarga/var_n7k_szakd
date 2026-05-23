@@ -14,8 +14,7 @@ def generate_launch_description():
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
     world_file = os.path.join(pkg_share, 'world', 'wheeltec_world.sdf')
-    robot_sdf = os.path.join(pkg_share, 'robot_description', 'wheeltec.sdf')
-    robot_urdf = os.path.join(pkg_share, 'robot_description', 'wheeltec.urdf')
+    robot_sdf = os.path.join(pkg_share, 'robot_description', 'roboworks', 'model.sdf')
 
     declare_world_name_cmd = DeclareLaunchArgument(
         'world_name',
@@ -25,7 +24,7 @@ def generate_launch_description():
 
     declare_robot_name_cmd = DeclareLaunchArgument(
         'robot_name',
-        default_value='wheeltec',
+        default_value='roboworks',
         description='Entity name of the robot in Gazebo',
     )
 
@@ -50,7 +49,7 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'use_sim_time': True},
-            {'robot_description': open(robot_urdf, 'r', encoding='utf-8').read()},
+            {'robot_description': open(robot_sdf, 'r', encoding='utf-8').read()},
         ],
     )
 
@@ -74,19 +73,19 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        name='wheeltec_bridge',
+        name='roboworks_bridge',
         output='screen',
         arguments=[
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-            '/model/wheeltec/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
+            '/model/roboworks/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
             '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
-            '/model/wheeltec/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
-            '/model/wheeltec/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry',
-            '/world/wheeltec_world/model/wheeltec/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
+            '/model/roboworks/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
+            '/model/roboworks/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry',
+            '/world/wheeltec_world/model/roboworks/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
         ],
         remappings=[
-            ('/model/wheeltec/pose', '/tf'),
-            ('/world/wheeltec_world/model/wheeltec/joint_state', 'joint_states'),
+            ('/model/roboworks/pose', '/tf'),
+            ('/world/wheeltec_world/model/roboworks/joint_state', 'joint_states'),
         ],
     )
 

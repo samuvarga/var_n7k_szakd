@@ -42,9 +42,9 @@ def generate_launch_description():
         description='Gazebo world name used by the robot spawn launch',
     )
 
-    wheeltec_sim = IncludeLaunchDescription(
+    roboworks_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_share, 'launch', 'wheeltec_sim.launch.py')
+            os.path.join(pkg_share, 'wheeltec_sim.launch.py')
         ),
         launch_arguments={
             'world_name': LaunchConfiguration('world_name'),
@@ -73,6 +73,6 @@ def generate_launch_description():
         declare_params_file_cmd,
         declare_map_cmd,
         declare_world_name_cmd,
-        wheeltec_sim,
+        roboworks_sim,
         bringup,
     ])

@@ -36,9 +36,9 @@ def generate_launch_description():
         description='Nav2 parameter file used by slam_toolbox',
     )
 
-    wheeltec_sim = IncludeLaunchDescription(
+    roboworks_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_share, 'launch', 'wheeltec_sim.launch.py')
+            os.path.join(pkg_share, 'wheeltec_sim.launch.py')
         ),
         launch_arguments={
             'world_name': LaunchConfiguration('world_name'),
@@ -61,6 +61,6 @@ def generate_launch_description():
         declare_use_sim_time_cmd,
         declare_autostart_cmd,
         declare_params_file_cmd,
-        wheeltec_sim,
+        roboworks_sim,
         slam,
     ])
