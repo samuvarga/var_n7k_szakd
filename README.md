@@ -28,6 +28,31 @@ source ~/ros2_ws/install/setup.bash
 ```
 </details>
 
+### Run Gazebo only
 ``` r
 ros2 launch var_n7k_szakd launch_gazebo.launch.py
 ```
+
+### Run the Wheeltec world with the robot
+``` r
+ros2 launch var_n7k_szakd wheeltec_sim.launch.py
+```
+
+### Run everything from one launch file
+``` r
+ros2 launch var_n7k_szakd all_in_one.launch.py
+```
+
+### Run SLAM mapping with slam_toolbox
+``` r
+ros2 launch var_n7k_szakd launch_slam_mapping.launch.py
+```
+
+### Run navigation on a saved map
+``` r
+ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/full/path/to/map.yaml
+```
+
+The SLAM launch uses `slam_toolbox` through `nav2_bringup`'s `slam_launch.py`.
+The navigation launch uses `nav2_bringup`'s `bringup_launch.py`.
+The `all_in_one.launch.py` file starts the Wheeltec world, spawns the robot, bridges the expected `tf`, `joint_states`, `odom`, `cmd_vel`, `scan`, and `clock` topics, and launches the Nav2 stack.

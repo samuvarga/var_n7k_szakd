@@ -1,0 +1,103 @@
+<?xml version='1.0'?>
+<robot name='wheeltec'>
+  <link name='base_link'>
+    <inertial>
+      <mass value='8.0'/>
+      <origin xyz='0 0 0' rpy='0 0 0'/>
+      <inertia ixx='0.15' ixy='0.0' ixz='0.0' iyy='0.20' iyz='0.0' izz='0.18'/>
+    </inertial>
+    <visual>
+      <origin xyz='0 0 0' rpy='0 0 0'/>
+      <geometry>
+        <box size='0.34 0.24 0.10'/>
+      </geometry>
+      <material name='body'>
+        <color rgba='0.25 0.25 0.30 1'/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz='0 0 0' rpy='0 0 0'/>
+      <geometry>
+        <box size='0.34 0.24 0.10'/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name='left_wheel_link'>
+    <inertial>
+      <mass value='0.6'/>
+      <origin xyz='0 0 0' rpy='0 0 0'/>
+      <inertia ixx='0.01' ixy='0.0' ixz='0.0' iyy='0.01' iyz='0.0' izz='0.01'/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius='0.035' length='0.025'/>
+      </geometry>
+      <material name='wheel'>
+        <color rgba='0.05 0.05 0.05 1'/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius='0.035' length='0.025'/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name='right_wheel_link'>
+    <inertial>
+      <mass value='0.6'/>
+      <origin xyz='0 0 0' rpy='0 0 0'/>
+      <inertia ixx='0.01' ixy='0.0' ixz='0.0' iyy='0.01' iyz='0.0' izz='0.01'/>
+    </inertial>
+    <visual>
+      <geometry>
+        <cylinder radius='0.035' length='0.025'/>
+      </geometry>
+      <material name='wheel'>
+        <color rgba='0.05 0.05 0.05 1'/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius='0.035' length='0.025'/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name='lidar_link'>
+    <visual>
+      <geometry>
+        <box size='0.05 0.05 0.05'/>
+      </geometry>
+      <material name='lidar'>
+        <color rgba='0.15 0.55 0.15 1'/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size='0.05 0.05 0.05'/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name='left_wheel_joint' type='continuous'>
+    <parent link='base_link'/>
+    <child link='left_wheel_link'/>
+    <origin xyz='0 0.14 -0.03' rpy='0 1.57079632679 0'/>
+    <axis xyz='0 1 0'/>
+  </joint>
+
+  <joint name='right_wheel_joint' type='continuous'>
+    <parent link='base_link'/>
+    <child link='right_wheel_link'/>
+    <origin xyz='0 -0.14 -0.03' rpy='0 1.57079632679 0'/>
+    <axis xyz='0 1 0'/>
+  </joint>
+
+  <joint name='lidar_joint' type='fixed'>
+    <parent link='base_link'/>
+    <child link='lidar_link'/>
+    <origin xyz='0.05 0 0.12' rpy='0 0 0'/>
+  </joint>
+</robot>
