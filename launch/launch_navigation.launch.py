@@ -44,7 +44,7 @@ def generate_launch_description():
 
     roboworks_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_share, 'wheeltec_sim.launch.py')
+            os.path.join(pkg_share, 'roboworks_sim.launch.py')
         ),
         launch_arguments={
             'world_name': LaunchConfiguration('world_name'),

@@ -4,10 +4,15 @@ import os
 
 package_name = 'var_n7k_szakd'
 
-robot_description_files = [
-    path for path in glob('robot_description/**/*', recursive=True)
-    if os.path.isfile(path)
-]
+robot_description_files = []
+for root, _, filenames in os.walk('robot_description'):
+    relative_root = os.path.relpath(root, 'robot_description')
+    target_root = os.path.join('share', package_name, 'robot_description')
+    if relative_root != '.':
+        target_root = os.path.join(target_root, relative_root)
+    files_in_root = [os.path.join(root, filename) for filename in filenames]
+    if files_in_root:
+        robot_description_files.append((target_root, files_in_root))
 
 setup(
     name=package_name,
@@ -19,7 +24,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'world'), glob('world/*')),
-        (os.path.join('share', package_name, 'robot_description'), robot_description_files),
+        *robot_description_files,
     ],
     install_requires=['setuptools'],
     zip_safe=True,

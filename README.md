@@ -35,7 +35,7 @@ ros2 launch var_n7k_szakd launch_gazebo.launch.py
 
 ### Run the roboworks world with the robot
 ``` r
-ros2 launch var_n7k_szakd wheeltec_sim.launch.py
+ros2 launch var_n7k_szakd roboworks_sim.launch.py
 ```
 
 ### Run everything from one launch file
