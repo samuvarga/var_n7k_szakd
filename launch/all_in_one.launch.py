@@ -4,7 +4,6 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, LogInfo, OpaqueFunction
-from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
@@ -70,7 +69,6 @@ def _launch_setup(context, *args, **kwargs):
         PythonLaunchDescriptionSource(
             os.path.join(pkg_share, 'launch', 'launch_rviz.launch.py')
         ),
-        condition=IfCondition(LaunchConfiguration('use_rviz')),
         launch_arguments={
             'use_sim_time': LaunchConfiguration('use_sim_time'),
         }.items(),
@@ -105,11 +103,6 @@ def generate_launch_description():
         default_value='',
         description='Map yaml file for localization mode',
     )
-    declare_use_rviz_cmd = DeclareLaunchArgument(
-        'use_rviz',
-        default_value='True',
-        description='Open RViz',
-    )
     declare_use_localization_cmd = DeclareLaunchArgument(
         'use_localization',
         default_value='True',
@@ -127,7 +120,6 @@ def generate_launch_description():
         declare_autostart_cmd,
         declare_params_file_cmd,
         declare_map_cmd,
-        declare_use_rviz_cmd,
         declare_use_localization_cmd,
         declare_graph_cmd,
         OpaqueFunction(function=_launch_setup),

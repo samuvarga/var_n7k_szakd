@@ -22,7 +22,7 @@ Visualization Manager:
       Enabled: true
       Name: Grid
       Plane: XY
-      Reference Frame: world
+      Reference Frame: base_link
       Value: true
     - Class: rviz_default_plugins/TF
       Enabled: true
@@ -42,7 +42,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: world
+    Fixed Frame: base_link
     Frame Rate: 30
   Tools:
     - Class: rviz_default_plugins/Interact
@@ -57,7 +57,7 @@ Visualization Manager:
       Class: rviz_default_plugins/Orbit
       Distance: 7.0
       Pitch: 0.35
-      Target Frame: world
+      Target Frame: base_link
       Yaw: 0.78
     Saved: ~
 Window Geometry:

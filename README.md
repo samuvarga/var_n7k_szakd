@@ -43,10 +43,7 @@ ros2 launch var_n7k_szakd roboworks_sim.launch.py
 ros2 launch var_n7k_szakd all_in_one.launch.py
 ```
 
-### Run RViz with the lidar display
-``` r
-ros2 launch var_n7k_szakd launch_rviz.launch.py
-```
+This launch now starts RViz automatically.
 
 ### Run SLAM mapping with slam_toolbox
 ``` r
