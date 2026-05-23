@@ -24,6 +24,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'world'), glob('world/*')),
+        (os.path.join('share', package_name, 'rviz'), glob('rviz/*')),
         *robot_description_files,
     ],
     install_requires=['setuptools'],

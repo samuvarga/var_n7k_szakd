@@ -41,43 +41,40 @@ def _launch_setup(context, *args, **kwargs):
                 )
             )
         )
-        return actions
+    else:
+        nav2_bringup = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')
+            ),
+            launch_arguments={
+                'namespace': '',
+                'slam': 'True',
+                'map': LaunchConfiguration('map'),
+                'keepout_mask': '',
+                'speed_mask': '',
+                'graph': LaunchConfiguration('graph'),
+                'use_sim_time': LaunchConfiguration('use_sim_time'),
+                'params_file': LaunchConfiguration('params_file'),
+                'autostart': LaunchConfiguration('autostart'),
+                'use_composition': 'False',
+                'use_intra_process_comms': 'False',
+                'use_respawn': 'False',
+                'use_localization': LaunchConfiguration('use_localization'),
+                'use_keepout_zones': 'False',
+                'use_speed_zones': 'False',
+            }.items(),
+        )
+        actions.append(nav2_bringup)
 
-    nav2_bringup = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')
-        ),
-        launch_arguments={
-            'namespace': '',
-            'slam': 'True',
-            'map': LaunchConfiguration('map'),
-            'keepout_mask': '',
-            'speed_mask': '',
-            'graph': LaunchConfiguration('graph'),
-            'use_sim_time': LaunchConfiguration('use_sim_time'),
-            'params_file': LaunchConfiguration('params_file'),
-            'autostart': LaunchConfiguration('autostart'),
-            'use_composition': 'False',
-            'use_intra_process_comms': 'False',
-            'use_respawn': 'False',
-            'use_localization': LaunchConfiguration('use_localization'),
-            'use_keepout_zones': 'False',
-            'use_speed_zones': 'False',
-        }.items(),
-    )
     rviz = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(nav2_bringup_dir, 'launch', 'rviz_launch.py')
+            os.path.join(pkg_share, 'launch', 'launch_rviz.launch.py')
         ),
         condition=IfCondition(LaunchConfiguration('use_rviz')),
         launch_arguments={
-            'namespace': '',
             'use_sim_time': LaunchConfiguration('use_sim_time'),
-            'rviz_config': os.path.join(nav2_bringup_dir, 'rviz', 'nav2_default_view.rviz'),
         }.items(),
     )
-
-    actions.append(nav2_bringup)
     actions.append(rviz)
     return actions
 
