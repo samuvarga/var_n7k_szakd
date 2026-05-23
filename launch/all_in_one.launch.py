@@ -67,7 +67,7 @@ def _launch_setup(context, *args, **kwargs):
 
     rviz = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_share, 'launch', 'launch_rviz.launch.py')
+            os.path.join(pkg_share, 'launch_rviz.launch.py')
         ),
         launch_arguments={
             'use_sim_time': LaunchConfiguration('use_sim_time'),
