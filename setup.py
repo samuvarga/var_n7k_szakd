@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 from glob import glob
 import os
 
-package_name = 'N7KK9N_wheeltec_nav'
+package_name = 'var_n7k_szakd'
 
 setup(
     name=package_name,
@@ -23,7 +23,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            # 'control_vehicle = N7KK9N_wheeltec_nav.control_vehicle:main',
+            # 'control_vehicle = var_n7k_szakd.control_vehicle:main',
         ],
     },
 )
