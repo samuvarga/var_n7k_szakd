@@ -44,9 +44,9 @@ Visualization Manager:
     - Class: rviz_default_plugins/RobotModel
       Enabled: true
       Name: RobotModel
-      Description Source: Topic
-      Description Topic:
-        Value: /robot_description
+      Description Source: Parameter
+      Description Parameter Name:
+        Value: robot_description
       Alpha: 1.0
     - Class: rviz_default_plugins/LaserScan
       Enabled: true
@@ -69,8 +69,8 @@ Visualization Manager:
       Use Fixed Frame: true
   Enabled: true
   Global Options:
-    Background Color: 48; 48; 48
-    Fixed Frame: roboworks/odom
+  Background Color: 48; 48; 48
+  Fixed Frame: base_link
     Frame Rate: 30
   Tools:
     - Class: rviz_default_plugins/Interact

@@ -15,6 +15,7 @@ def generate_launch_description():
 
     world_file = os.path.join(pkg_share, 'world', 'roboworks_world.sdf')
     robot_sdf = os.path.join(pkg_share, 'robot_description', 'roboworks', 'model.sdf')
+    robot_urdf = os.path.join(pkg_share, 'robot_description', 'roboworks', 'model.urdf')
 
     declare_world_name_cmd = DeclareLaunchArgument(
         'world_name',
@@ -42,6 +43,7 @@ def generate_launch_description():
         launch_arguments={'gz_args': '-r -v 4 ' + world_file}.items(),
     )
 
+    # prefer URDF if available (RViz/robot_state_publisher expects URDF), fall back to SDF
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -49,7 +51,7 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'use_sim_time': True},
-            {'robot_description': open(robot_sdf, 'r', encoding='utf-8').read()},
+            {'robot_description': open(robot_urdf, 'r', encoding='utf-8').read() if os.path.exists(robot_urdf) else open(robot_sdf, 'r', encoding='utf-8').read()},
         ],
     )
 
