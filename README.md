@@ -17,7 +17,7 @@ git clone https://github.com/samuvarga/var_n7k_szakd
 cd ~/ros2_ws
 ```
 ``` r
-colcon build --packages-select var_n7k_szakd --symlink-install
+colcon build --packages-select var_n7k_szakd --symlink-install && . install/setup.bash
 ```
 
 <details>
@@ -31,29 +31,3 @@ source ~/ros2_ws/install/setup.bash
 ``` r
 ros2 launch var_n7k_szakd launch_example1.launch.py
 ```
-
-# Delete this part if you are using it as a template
-
-ROS 2 pacage template, to get started, use template by clicking on the Green button labeled [`Use this template`](https://github.com/samuvarga/var_n7k_szakd/generate) / [`Create new repository`](https://github.com/samuvarga/var_n7k_szakd/generate). 
-
-<p align="center"><img src="img/use_this_template01.png" width="60%" /></p>
-
-
-Let's assume 
-- your Github username is `mycoolusername`
-- your ROS 2 repo shold be `cool_ros2_package`
-
-Replace everything in the cloned repo:
-
-- `var_n7k_szakd` >> `cool_ros2_package` (the folder was already renamed after `Use this template`)
-- `samuvarga` >> `mycoolusername`
-- find all `todo` strings and fill the blanks
-
-The easiest way is VS code:
-
-<p align="center"><img src="img/replace01.png" width="90%" /></p>
-
-> [!IMPORTANT]  
-> Don't forget to rename the directory (folder) and the file too.
-
-Now `colcon build` your ROS 2 package and you can start wokring.
