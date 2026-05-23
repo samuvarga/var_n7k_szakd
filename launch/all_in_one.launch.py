@@ -85,7 +85,7 @@ def _launch_setup(context, *args, **kwargs):
 def generate_launch_description():
     declare_world_name_cmd = DeclareLaunchArgument(
         'world_name',
-        default_value='wheeltec_world',
+        default_value='roboworks_world',
         description='Gazebo world name used by the robot spawn launch',
     )
     declare_use_sim_time_cmd = DeclareLaunchArgument(

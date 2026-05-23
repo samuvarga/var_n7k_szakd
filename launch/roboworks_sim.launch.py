@@ -13,12 +13,12 @@ def generate_launch_description():
     pkg_share = get_package_share_directory('var_n7k_szakd')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
-    world_file = os.path.join(pkg_share, 'world', 'wheeltec_world.sdf')
+    world_file = os.path.join(pkg_share, 'world', 'roboworks_world.sdf')
     robot_sdf = os.path.join(pkg_share, 'robot_description', 'roboworks', 'model.sdf')
 
     declare_world_name_cmd = DeclareLaunchArgument(
         'world_name',
-        default_value='wheeltec_world',
+        default_value='roboworks_world',
         description='Gazebo world name used by ros_gz_sim create',
     )
 
@@ -81,11 +81,11 @@ def generate_launch_description():
             '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
             '/model/roboworks/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
             '/model/roboworks/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry',
-            '/world/wheeltec_world/model/roboworks/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
+            '/world/roboworks_world/model/roboworks/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
         ],
         remappings=[
             ('/model/roboworks/pose', '/tf'),
-            ('/world/wheeltec_world/model/roboworks/joint_state', 'joint_states'),
+            ('/world/roboworks_world/model/roboworks/joint_state', 'joint_states'),
         ],
     )
 
