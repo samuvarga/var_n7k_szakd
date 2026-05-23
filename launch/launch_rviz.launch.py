@@ -10,12 +10,20 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('var_n7k_szakd')
-    rviz_config = os.path.join(pkg_share, 'rviz', 'roboworks_lidar.rviz')
+    default_rviz_config = os.path.join(pkg_share, 'rviz', 'roboworks_lidar.rviz')
+
+    rviz_config = LaunchConfiguration('rviz_config')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',
         default_value='True',
         description='Use simulation clock in RViz',
+    )
+
+    declare_rviz_config_cmd = DeclareLaunchArgument(
+        'rviz_config',
+        default_value=default_rviz_config,
+        description='Full path to rviz config file to use',
     )
 
     rviz = Node(
@@ -29,5 +37,6 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_use_sim_time_cmd,
+        declare_rviz_config_cmd,
         TimerAction(period=10.0, actions=[rviz]),
     ])

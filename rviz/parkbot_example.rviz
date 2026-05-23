@@ -1,0 +1,26 @@
+Visualization Manager:
+  Displays:
+    - Name: Grid
+      Class: rviz_default_plugins/Grid
+      Enabled: true
+      Reference Frame: <Fixed Frame>
+    - Name: RobotModel
+      Class: rviz_default_plugins/RobotModel
+      Enabled: true
+      Description Source: Parameter
+      Description Parameter: /robot_description
+      Visual Enabled: true
+    - Name: LaserScan
+      Class: rviz_default_plugins/LaserScan
+      Enabled: true
+      Topic:
+        Value: /scan
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: base_link
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
