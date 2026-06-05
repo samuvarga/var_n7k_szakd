@@ -38,5 +38,5 @@ def generate_launch_description():
     return LaunchDescription([
         declare_use_sim_time_cmd,
         declare_rviz_config_cmd,
-        TimerAction(period=10.0, actions=[rviz]),
+        TimerAction(period=25.0, actions=[rviz]),
     ])

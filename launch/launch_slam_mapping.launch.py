@@ -11,6 +11,7 @@ from launch.substitutions import LaunchConfiguration
 def generate_launch_description():
     bringup_dir = get_package_share_directory('nav2_bringup')
     pkg_share = get_package_share_directory('var_n7k_szakd')
+    default_slam_params = os.path.join(pkg_share, 'config', 'slam_toolbox_params.yaml')
 
     declare_world_name_cmd = DeclareLaunchArgument(
         'world_name',
@@ -32,8 +33,8 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(bringup_dir, 'params', 'nav2_params.yaml'),
-        description='Nav2 parameter file used by slam_toolbox',
+        default_value=default_slam_params,
+        description='SLAM Toolbox parameter file used for mapping',
     )
 
     roboworks_sim = IncludeLaunchDescription(
@@ -56,6 +57,15 @@ def generate_launch_description():
         }.items(),
     )
 
+    rviz = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_share, 'launch_rviz.launch.py')
+        ),
+        launch_arguments={
+            'use_sim_time': LaunchConfiguration('use_sim_time'),
+        }.items(),
+    )
+
     return LaunchDescription([
         declare_world_name_cmd,
         declare_use_sim_time_cmd,
@@ -63,4 +73,5 @@ def generate_launch_description():
         declare_params_file_cmd,
         roboworks_sim,
         slam,
+        rviz,
     ])

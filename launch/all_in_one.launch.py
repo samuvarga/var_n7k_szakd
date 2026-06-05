@@ -21,16 +21,6 @@ def _launch_setup(context, *args, **kwargs):
 
     actions = []
 
-    roboworks_sim = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_share, 'roboworks_sim.launch.py')
-        ),
-        launch_arguments={
-            'world_name': LaunchConfiguration('world_name'),
-        }.items(),
-    )
-    actions.append(roboworks_sim)
-
     if nav2_bringup_dir is None:
         actions.append(
             LogInfo(
@@ -41,44 +31,26 @@ def _launch_setup(context, *args, **kwargs):
             )
         )
     else:
-        nav2_bringup = IncludeLaunchDescription(
+        slam_mapping = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')
+                os.path.join(pkg_share, 'launch_slam_mapping.launch.py')
             ),
             launch_arguments={
-                'namespace': '',
-                'slam': 'True',
-                'map': LaunchConfiguration('map'),
-                'keepout_mask': '',
-                'speed_mask': '',
-                'graph': LaunchConfiguration('graph'),
+                'world_name': LaunchConfiguration('world_name'),
                 'use_sim_time': LaunchConfiguration('use_sim_time'),
-                'params_file': LaunchConfiguration('params_file'),
                 'autostart': LaunchConfiguration('autostart'),
-                'use_composition': 'False',
-                'use_intra_process_comms': 'False',
-                'use_respawn': 'False',
-                'use_localization': LaunchConfiguration('use_localization'),
-                'use_keepout_zones': 'False',
-                'use_speed_zones': 'False',
+                'params_file': LaunchConfiguration('params_file'),
             }.items(),
         )
-        actions.append(nav2_bringup)
-
-    rviz = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(pkg_share, 'launch_rviz.launch.py')
-        ),
-        launch_arguments={
-            'use_sim_time': LaunchConfiguration('use_sim_time'),
-            'rviz_config': LaunchConfiguration('rviz_config'),
-        }.items(),
-    )
-    actions.append(rviz)
+        actions.append(slam_mapping)
     return actions
 
 
 def generate_launch_description():
+    nav2_bringup_dir = _get_package_share_or_none('nav2_bringup')
+    pkg_share = get_package_share_directory('var_n7k_szakd')
+    default_slam_params = os.path.join(pkg_share, 'config', 'slam_toolbox_params.yaml')
+
     declare_world_name_cmd = DeclareLaunchArgument(
         'world_name',
         default_value='roboworks_world',
@@ -96,38 +68,13 @@ def generate_launch_description():
     )
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value='',
-        description='Nav2 parameter file, if nav2_bringup is installed',
+        default_value=default_slam_params,
+        description='SLAM Toolbox parameter file used for mapping',
     )
-    declare_map_cmd = DeclareLaunchArgument(
-        'map',
-        default_value='',
-        description='Map yaml file for localization mode',
-    )
-    declare_use_localization_cmd = DeclareLaunchArgument(
-        'use_localization',
-        default_value='True',
-        description='Enable localization/navigation stack',
-    )
-    declare_rviz_config_cmd = DeclareLaunchArgument(
-        'rviz_config',
-        default_value=os.path.join(get_package_share_directory('var_n7k_szakd'), 'rviz', 'roboworks_lidar.rviz'),
-        description='RViz config file to load',
-    )
-    declare_graph_cmd = DeclareLaunchArgument(
-        'graph',
-        default_value='',
-        description='Route graph file used by Nav2 route server',
-    )
-
     return LaunchDescription([
         declare_world_name_cmd,
         declare_use_sim_time_cmd,
         declare_autostart_cmd,
         declare_params_file_cmd,
-        declare_map_cmd,
-        declare_use_localization_cmd,
-        declare_rviz_config_cmd,
-        declare_graph_cmd,
         OpaqueFunction(function=_launch_setup),
     ])
