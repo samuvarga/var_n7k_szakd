@@ -78,7 +78,7 @@
 
     <model name='wall_front'>
       <static>true</static>
-      <pose>6 0 0.5 0 0 0</pose>
+      <pose>6 0 0.5 0 0 0</pos  >
       <link name='link'>
         <collision name='collision'>
           <geometry><box><size>0.2 8 1.0</size></box></geometry>
@@ -104,30 +104,198 @@
       </link>
     </model>
 
-    <model name='parking_block_1'>
+    <model name='inner_wall_north_left'>
       <static>true</static>
-      <pose>1.5 1.25 0.2 0 0 0</pose>
+      <pose>-3.75 2.55 0.5 0 0 0</pose>
       <link name='link'>
         <collision name='collision'>
-          <geometry><box><size>0.5 0.5 0.4</size></box></geometry>
+          <geometry><box><size>3.2 0.16 1.0</size></box></geometry>
         </collision>
         <visual name='visual'>
-          <geometry><box><size>0.5 0.5 0.4</size></box></geometry>
-          <material><ambient>0.75 0.35 0.25 1</ambient></material>
+          <geometry><box><size>3.2 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
         </visual>
       </link>
     </model>
 
-    <model name='parking_block_2'>
+    <model name='inner_wall_north_right'>
       <static>true</static>
-      <pose>1.5 -1.25 0.2 0 0 0</pose>
+      <pose>2.15 2.55 0.5 0 0 0</pose>
       <link name='link'>
         <collision name='collision'>
-          <geometry><box><size>0.5 0.5 0.4</size></box></geometry>
+          <geometry><box><size>4.0 0.16 1.0</size></box></geometry>
         </collision>
         <visual name='visual'>
-          <geometry><box><size>0.5 0.5 0.4</size></box></geometry>
-          <material><ambient>0.75 0.35 0.25 1</ambient></material>
+          <geometry><box><size>4.0 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_mid_left'>
+      <static>true</static>
+      <pose>-4.35 0.45 0.5 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>2.45 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>2.45 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_mid_right'>
+      <static>true</static>
+      <pose>1.9 0.45 0.5 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>4.8 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>4.8 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_south_left'>
+      <static>true</static>
+      <pose>-3.95 -2.55 0.5 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>2.95 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>2.95 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_south_center'>
+      <static>true</static>
+      <pose>0.0 -2.55 0.5 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>1.7 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>1.7 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_south_right'>
+      <static>true</static>
+      <pose>3.35 -2.55 0.5 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>2.55 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>2.55 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_vertical_left_top'>
+      <static>true</static>
+      <pose>-1.35 3.0 0.5 0 0 1.57079632679</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>2.5 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>2.5 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_vertical_left_bottom'>
+      <static>true</static>
+      <pose>-1.35 -0.85 0.5 0 0 1.57079632679</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>3.2 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>3.2 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_vertical_right_top'>
+      <static>true</static>
+      <pose>1.85 3.0 0.5 0 0 1.57079632679</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>2.2 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>2.2 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_vertical_right_bottom'>
+      <static>true</static>
+      <pose>1.85 -0.55 0.5 0 0 1.57079632679</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>3.0 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>3.0 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_wall_vertical_far_right'>
+      <static>true</static>
+      <pose>3.95 1.0 0.5 0 0 1.57079632679</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>2.0 0.16 1.0</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>2.0 0.16 1.0</size></box></geometry>
+          <material><ambient>0.52 0.47 0.42 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_pillar_north'>
+      <static>true</static>
+      <pose>-0.25 1.8 0.2 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>0.45 0.45 0.4</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>0.45 0.45 0.4</size></box></geometry>
+          <material><ambient>0.72 0.44 0.24 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='inner_pillar_south'>
+      <static>true</static>
+      <pose>2.7 -0.95 0.2 0 0 0</pose>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry><box><size>0.55 0.55 0.4</size></box></geometry>
+        </collision>
+        <visual name='visual'>
+          <geometry><box><size>0.55 0.55 0.4</size></box></geometry>
+          <material><ambient>0.72 0.44 0.24 1</ambient></material>
         </visual>
       </link>
     </model>
