@@ -91,6 +91,15 @@ def generate_launch_description():
         ],
     )
 
+    odom_tf_static = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='odom_tf_static',
+        output='screen',
+        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_link'],
+        parameters=[{'use_sim_time': True}],
+    )
+
     lidar_sensor_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
@@ -117,5 +126,6 @@ def generate_launch_description():
         robot_state_publisher,
         spawn_robot,
         bridge,
+        odom_tf_static,
         lidar_sensor_tf,
     ])

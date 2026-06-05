@@ -38,6 +38,7 @@ setup(
     entry_points={
         'console_scripts': [
             # 'control_vehicle = var_n7k_szakd.control_vehicle:main',
+            'odom_tf_broadcaster = var_n7k_szakd.odom_tf_broadcaster:main',
         ],
     },
 )
