@@ -91,6 +91,19 @@ def generate_launch_description():
         ],
     )
 
+    lidar_sensor_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='lidar_sensor_tf',
+        output='screen',
+        arguments=[
+            '0', '0', '0', '0', '0', '0',
+            'lidar_link',
+            'roboworks/lidar_link/gpu_lidar',
+        ],
+        parameters=[{'use_sim_time': True}],
+    )
+
     return LaunchDescription([
         declare_world_name_cmd,
         declare_robot_name_cmd,
@@ -104,4 +117,5 @@ def generate_launch_description():
         robot_state_publisher,
         spawn_robot,
         bridge,
+        lidar_sensor_tf,
     ])

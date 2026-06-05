@@ -71,6 +71,7 @@ def _launch_setup(context, *args, **kwargs):
         ),
         launch_arguments={
             'use_sim_time': LaunchConfiguration('use_sim_time'),
+            'rviz_config': LaunchConfiguration('rviz_config'),
         }.items(),
     )
     actions.append(rviz)
@@ -108,6 +109,11 @@ def generate_launch_description():
         default_value='True',
         description='Enable localization/navigation stack',
     )
+    declare_rviz_config_cmd = DeclareLaunchArgument(
+        'rviz_config',
+        default_value=os.path.join(get_package_share_directory('var_n7k_szakd'), 'rviz', 'roboworks_lidar.rviz'),
+        description='RViz config file to load',
+    )
     declare_graph_cmd = DeclareLaunchArgument(
         'graph',
         default_value='',
@@ -121,6 +127,7 @@ def generate_launch_description():
         declare_params_file_cmd,
         declare_map_cmd,
         declare_use_localization_cmd,
+        declare_rviz_config_cmd,
         declare_graph_cmd,
         OpaqueFunction(function=_launch_setup),
     ])
