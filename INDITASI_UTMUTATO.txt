@@ -1,0 +1,340 @@
+WHEELTEC ROBOT SZIMULACIO, SLAM ES NAVIGACIO
+===============================================
+
+ROS 2 Jazzy workspace:
+/mnt/c/Users/samuv/ros2_ws
+
+ROS 2 package:
+var_n7k_szakd
+
+A parancsokat Linux/WSL terminalban kell futtatni.
+Minden uj terminalban eloszor futtasd ezeket:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+
+
+1. BUILD
+========
+
+Az elso inditas elott, illetve kodmodositas utan:
+
+cd /mnt/c/Users/samuv/ros2_ws
+source /opt/ros/jazzy/setup.bash
+colcon build --packages-select var_n7k_szakd --symlink-install
+source install/setup.bash
+
+Sikeres build eseten a colcon osszefoglaloban a var_n7k_szakd csomagnak
+sikeresen kell befejezodnie.
+
+
+2. CSAK A GAZEBO INDÍTÁSA
+==========================
+
+Uj terminalban:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+ros2 launch var_n7k_szakd launch_gazebo.launch.py
+
+Ez csak a Gazebo Sim-et inditja el.
+
+
+3. A ROBOTOS SZIMULACIO INDÍTÁSA
+=================================
+
+Uj terminalban:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+ros2 launch var_n7k_szakd roboworks_sim.launch.py
+
+Ez elinditja:
+- a Gazebo Sim szimulaciot,
+- a Wheeltec roboworks robotot,
+- a robot state publishert,
+- az odometria kozvetitest,
+- a lidar topic bridge-et,
+- a TF transzformaciokat.
+
+Ezt a terminalt hagyd futni.
+
+
+4. SLAM MAPPING INDÍTÁSA
+========================
+
+Ha ismeretlen kornyezetrol szeretnel terkepet kesziteni, ne inditsd el kulon
+a roboworks_sim.launch.py fajlt. A launch_slam_mapping.launch.py mar maga is
+elinditja a szimulaciot, a robotot, a bridge-et, a SLAM Toolboxot es az RViz2-t.
+Uj terminalban futtasd:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+ros2 launch var_n7k_szakd launch_slam_mapping.launch.py
+
+Ez egyetlen launchbol elinditja:
+- a robot szimulaciojat,
+- a SLAM Toolboxot,
+- az RViz2-t.
+
+Ezt a terminalt is hagyd futni.
+
+
+5. A ROBOT MOZGATÁSA SLAM KÖZBEN
+=================================
+
+Uj terminalban toltsd be a kornyezetet:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+
+Ellenorizd a cmd_vel topicokat:
+
+ros2 topic list | grep cmd_vel
+
+Ellenorizd, hogy a szimulacio bridge-e is fut-e:
+
+ros2 node list
+
+A listaban szerepelnie kell ennek:
+
+/roboworks_bridge
+
+Ha teleop_twist_keyboard telepitve van, inditsd:
+
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=/model/roboworks/cmd_vel
+
+A Wheeltec robot Gazebo Ackermann vezerloje a /model/roboworks/cmd_vel
+topicon varja a sebessegparancsot. Ezert kell ide remappelni a teleop
+cmd_vel bemenetet.
+
+A parancs topic kapcsolat ellenorzese:
+
+ros2 topic info /model/roboworks/cmd_vel -v
+
+A Gazebo topic ellenorzese Jazzy alatt:
+
+gz topic -l | grep -E 'cmd_vel|roboworks'
+
+Elvart eredmeny:
+
+/model/roboworks/cmd_vel
+
+A teleop_twist_keyboard alapertelmezett billentyui:
+
+u   i   o       elore es iranyitott mozgas
+j   k   l       balra, megallas, jobbra
+m   ,   .       hatra es iranyitott mozgas
+
+i = elore
+j = balra fordulas
+k = megallas
+l = jobbra fordulas
+, = hatra
+
+Fontos: az i, j, k, l billentyuk mozgatjak a robotot. A q, z, w, x, e, c
+billentyuk nem mozgatasi parancsok, hanem a megengedett sebesseget modositjak:
+
+q/z = maximalis sebesseg novelese/csokkentese
+w/x = linearis sebesseg novelese/csokkentese
+e/c = szogsebesseg novelese/csokkentese
+
+Ha a robot tul gyors, nyomd meg tobbszor a z vagy x billentyut.
+
+Ha a teleop csomag nem erheto el, kezzel is kuldhetsz sebesseget.
+Egyenes mozgas:
+
+ros2 topic pub --rate 10 /model/roboworks/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}, angular: {z: 0.0}}"
+
+Fordulas:
+
+ros2 topic pub --rate 10 /model/roboworks/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0}, angular: {z: 0.4}}"
+
+A kezi sebessegparancs leallitasa:
+
+Ctrl+C
+
+Jard korbe a szimulalt kornyezetet, hogy a SLAM Toolbox minden fontos reszt
+fel tudjon merni.
+
+
+6. A TÉRKÉP MENTÉSE
+====================
+
+Ha a terkep elkészült, nyiss uj terminalt:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+
+Mentsd el a terkepet:
+
+ros2 run nav2_map_server map_saver_cli -f /home/$USER/roboworks_map
+
+Ezeknek a fajloknak kell letrejonniuk:
+
+/home/$USER/roboworks_map.yaml
+/home/$USER/roboworks_map.pgm
+
+Ellenorzes:
+
+ls -lh /home/$USER/roboworks_map.*
+
+A kovetkezo lepeshez a YAML fajl teljes eleresi utja kell:
+
+/home/$USER/roboworks_map.yaml
+
+
+7. A FUTÓ SZIMULÁCIÓ LEÁLLÍTÁSA
+================================
+
+Az aktualis launch terminaljaiban nyomd meg:
+
+Ctrl+C
+
+Ha egy process beragad, futtasd:
+
+pkill -9 -f 'gz sim|parameter_bridge|robot_state_publisher|odom_tf_broadcaster|static_transform_publisher|slam_toolbox|rviz2|amcl|lifecycle_manager|controller_server|planner_server|map_server|bt_navigator|collision_monitor' 2>/dev/null || true
+
+
+8. NAVIGÁCIÓ INDÍTÁSA MENTETT TÉRKÉPPEL
+========================================
+
+Eloszor ujra buildelj, hogy a legfrissebb launch es konfiguracios fajlok
+legyenek telepitve:
+
+cd /mnt/c/Users/samuv/ros2_ws
+source /opt/ros/jazzy/setup.bash
+colcon build --packages-select var_n7k_szakd --symlink-install
+source install/setup.bash
+
+Ezutan inditsd a navigaciot:
+
+ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks_map.yaml
+
+A map:= argumentumot mindig add meg.
+
+A navigacio a mentett terkepet, az AMCL lokalizaciot es a Nav2 stack-et
+hasznalja.
+
+
+9. RVIZ: KEZDETI POZÍCIÓ BEÁLLÍTÁSA
+===================================
+
+Az RViz-ben:
+
+1. Valaszd a 2D Pose Estimate eszkozt.
+2. Kattints a robot valos kezdohelyere a terkepen.
+3. Huzd az egeret a robot iranyaba.
+4. Engedd el az egérgombot.
+
+Az AMCL pozicio ellenorzese uj terminalban:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+ros2 topic echo /amcl_pose
+
+
+10. NAVIGÁCIÓS CÉL KÜLDÉSE RVIZ-BEN
+===================================
+
+Az RViz-ben:
+
+1. Valaszd a Nav2 Goal vagy 2D Goal Pose eszkozt.
+2. Kattints a celhelyre.
+3. Huzd meg a celorientaciot.
+4. Engedd el az egergombot.
+
+A robotnak meg kell terveznie az utvonalat, majd el kell indulnia a cel fele.
+
+
+11. HASZNOS ELLENŐRZŐ PARANCSOK
+================================
+
+Aktiv node-ok:
+
+ros2 node list
+
+Topicok:
+
+ros2 topic list
+
+Terkep topic egyszeri kiolvasasa:
+
+ros2 topic echo /map --once
+
+Lidar topic ellenorzese:
+
+ros2 topic echo /scan --once
+
+Odometra ellenorzese:
+
+ros2 topic echo /odom --once
+
+TF frame-ek ellenorzese:
+
+ros2 run tf2_tools view_frames
+
+Nav2 lifecycle allapotok:
+
+ros2 lifecycle get /map_server
+ros2 lifecycle get /amcl
+ros2 lifecycle get /controller_server
+ros2 lifecycle get /planner_server
+ros2 lifecycle get /bt_navigator
+
+A mukodo node allapotanak ezt kell mutatnia:
+
+active [3]
+
+
+12. TIPIKUS HIBÁK
+=================
+
+Hiba: package 'var_n7k_szakd' not found
+
+Megoldas:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+
+Ha tovabbra is fennall:
+
+cd /mnt/c/Users/samuv/ros2_ws
+colcon build --packages-select var_n7k_szakd --symlink-install
+source install/setup.bash
+
+
+Hiba: map file not found
+
+Ellenorizd:
+
+ls -lh /home/$USER/roboworks_map.yaml
+ls -lh /home/$USER/roboworks_map.pgm
+
+A navigacio helyes inditasa:
+
+ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks_map.yaml
+
+
+Hiba: collision_monitor vagy Nav2 lifecycle hiba
+
+Allits le minden regi ROS/Gazebo processzt:
+
+pkill -9 -f 'gz sim|parameter_bridge|robot_state_publisher|odom_tf_broadcaster|static_transform_publisher|slam_toolbox|rviz2|amcl|lifecycle_manager|controller_server|planner_server|map_server|bt_navigator|collision_monitor' 2>/dev/null || true
+
+Ezutan inditsd ujra a navigaciot egy teljesen uj terminalbol.
+
+
+13. JAVASOLT TERMINÁL FELBONTÁS
+================================
+
+Terminal 1: szimulacio vagy SLAM launch
+Terminal 2: RViz / launch ellenorzes
+Terminal 3: teleop vagy /model/roboworks/cmd_vel mozgas
+Terminal 4: terkep mentes / topic es node ellenorzes
+Terminal 5: navigacio es celkuldes
+
+Minden terminalban ez legyen az elso ket parancs:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash

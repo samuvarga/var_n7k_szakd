@@ -79,24 +79,48 @@ def generate_launch_description():
         output='screen',
         arguments=[
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-            '/model/roboworks/pose@tf2_msgs/msg/TFMessage@gz.msgs.Pose_V',
             '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
             '/model/roboworks/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
             '/model/roboworks/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry',
             '/world/roboworks_world/model/roboworks/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
         ],
         remappings=[
-            ('/model/roboworks/pose', '/tf'),
             ('/world/roboworks_world/model/roboworks/joint_state', 'joint_states'),
         ],
     )
 
-    odom_tf_static = Node(
+    odom_tf_broadcaster = Node(
+        package='var_n7k_szakd',
+        executable='odom_tf_broadcaster',
+        name='odom_tf_broadcaster',
+        output='screen',
+        parameters=[
+            {'use_sim_time': True},
+            {'odom_topic': '/model/roboworks/odometry'},
+            {'parent_frame': 'odom'},
+            {'child_frame': 'base_footprint'},
+        ],
+    )
+
+    base_footprint_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        name='odom_tf_static',
+        name='base_footprint_tf',
         output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_link'],
+        arguments=['0', '0', '0', '0', '0', '0', 'base_footprint', 'base_link'],
+        parameters=[{'use_sim_time': True}],
+    )
+
+    base_link_lidar_tf = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='base_link_lidar_tf',
+        output='screen',
+        arguments=[
+            '0.25', '0', '0.094', '0', '0', '0',
+            'base_link',
+            'lidar_link',
+        ],
         parameters=[{'use_sim_time': True}],
     )
 
@@ -126,6 +150,8 @@ def generate_launch_description():
         robot_state_publisher,
         spawn_robot,
         bridge,
-        odom_tf_static,
+        odom_tf_broadcaster,
+        base_footprint_tf,
+        base_link_lidar_tf,
         lidar_sensor_tf,
     ])

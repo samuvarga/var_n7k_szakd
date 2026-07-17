@@ -3,13 +3,18 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, Shutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
 
+def _require_map(context):
+    if not LaunchConfiguration('map').perform(context):
+        return [Shutdown(reason='Navigation requires map:=/absolute/path/to/map.yaml')]
+    return []
+
+
 def generate_launch_description():
-    bringup_dir = get_package_share_directory('nav2_bringup')
     pkg_share = get_package_share_directory('var_n7k_szakd')
 
     declare_use_sim_time_cmd = DeclareLaunchArgument(
@@ -26,14 +31,17 @@ def generate_launch_description():
 
     declare_params_file_cmd = DeclareLaunchArgument(
         'params_file',
-        default_value=os.path.join(bringup_dir, 'params', 'nav2_params.yaml'),
+        default_value=os.path.join(pkg_share, 'config', 'nav2_params.yaml'),
         description='Nav2 parameter file for localization and navigation',
     )
 
     declare_map_cmd = DeclareLaunchArgument(
         'map',
-        default_value=os.path.join(bringup_dir, 'maps', 'tb3_sandbox.yaml'),
-        description='Map file used for localization and navigation',
+        default_value='',
+        description=(
+            'Map YAML used for localization. Pass an exported SLAM map with '
+            'map:=/absolute/path/to/map.yaml.'
+        ),
     )
 
     declare_world_name_cmd = DeclareLaunchArgument(
@@ -53,17 +61,24 @@ def generate_launch_description():
 
     bringup = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(bringup_dir, 'launch', 'bringup_launch.py')
+            os.path.join(pkg_share, 'nav2_navigation.launch.py')
         ),
         launch_arguments={
-            'slam': 'False',
-            'map': LaunchConfiguration('map'),
             'use_sim_time': LaunchConfiguration('use_sim_time'),
             'params_file': LaunchConfiguration('params_file'),
             'autostart': LaunchConfiguration('autostart'),
-            'use_composition': 'False',
-            'use_intra_process_comms': 'False',
-            'use_respawn': 'False',
+        }.items(),
+    )
+
+    localization = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(pkg_share, 'nav2_localization_nodes.launch.py')
+        ),
+        launch_arguments={
+            'use_sim_time': LaunchConfiguration('use_sim_time'),
+            'params_file': LaunchConfiguration('params_file'),
+            'map': LaunchConfiguration('map'),
+            'autostart': LaunchConfiguration('autostart'),
         }.items(),
     )
 
@@ -73,6 +88,8 @@ def generate_launch_description():
         declare_params_file_cmd,
         declare_map_cmd,
         declare_world_name_cmd,
+        OpaqueFunction(function=_require_map),
         roboworks_sim,
+        localization,
         bringup,
     ])
