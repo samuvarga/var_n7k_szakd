@@ -5,7 +5,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 
 
@@ -13,7 +13,11 @@ def generate_launch_description():
     pkg_share = get_package_share_directory('var_n7k_szakd')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
-    world_file = os.path.join(pkg_share, 'world', 'roboworks_world.sdf')
+    world_file = PathJoinSubstitution([
+        pkg_share,
+        'world',
+        LaunchConfiguration('world_file'),
+    ])
     robot_sdf = os.path.join(pkg_share, 'robot_description', 'roboworks', 'model.sdf')
     robot_urdf = os.path.join(pkg_share, 'robot_description', 'roboworks', 'model.urdf')
 
@@ -21,6 +25,12 @@ def generate_launch_description():
         'world_name',
         default_value='roboworks_world',
         description='Gazebo world name used by ros_gz_sim create',
+    )
+
+    declare_world_file_cmd = DeclareLaunchArgument(
+        'world_file',
+        default_value='roboworks_world.sdf',
+        description='World SDF filename installed in the package world directory',
     )
 
     declare_robot_name_cmd = DeclareLaunchArgument(
@@ -40,7 +50,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ),
-        launch_arguments={'gz_args': '-r -v 4 ' + world_file}.items(),
+            launch_arguments={'gz_args': ['-r -v 4 ', world_file]}.items(),
     )
 
     # prefer URDF if available (RViz/robot_state_publisher expects URDF), fall back to SDF
@@ -139,6 +149,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_world_name_cmd,
+        declare_world_file_cmd,
         declare_robot_name_cmd,
         declare_x_cmd,
         declare_y_cmd,

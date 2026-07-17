@@ -26,6 +26,12 @@ def generate_launch_description():
         description='Full path to rviz config file to use',
     )
 
+    declare_start_delay_cmd = DeclareLaunchArgument(
+        'start_delay',
+        default_value='25.0',
+        description='Delay before starting RViz in seconds',
+    )
+
     rviz = Node(
         package='rviz2',
         executable='rviz2',
@@ -38,5 +44,6 @@ def generate_launch_description():
     return LaunchDescription([
         declare_use_sim_time_cmd,
         declare_rviz_config_cmd,
-        TimerAction(period=25.0, actions=[rviz]),
+        declare_start_delay_cmd,
+        TimerAction(period=LaunchConfiguration('start_delay'), actions=[rviz]),
     ])

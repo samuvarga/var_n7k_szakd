@@ -49,6 +49,10 @@ source /opt/ros/jazzy/setup.bash
 source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
 ros2 launch var_n7k_szakd roboworks_sim.launch.py
 
+Ha csak a robotot es az uj, nyitottabb palyat szeretned kiprobalni:
+
+ros2 launch var_n7k_szakd roboworks_sim.launch.py world_file:=roboworks_open_world.sdf
+
 Ez elinditja:
 - a Gazebo Sim szimulaciot,
 - a Wheeltec roboworks robotot,
@@ -71,6 +75,19 @@ Uj terminalban futtasd:
 source /opt/ros/jazzy/setup.bash
 source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
 ros2 launch var_n7k_szakd launch_slam_mapping.launch.py
+
+Ez az alapertelmezett, jelenlegi palyat inditja.
+
+Az uj, nagyobb es nyitottabb palya inditasa:
+
+ros2 launch var_n7k_szakd launch_slam_mapping.launch.py world_file:=roboworks_open_world.sdf
+
+Az uj palya fajlja:
+
+world/roboworks_open_world.sdf
+
+Az uj palyan nagyobb szabad terulet es kevesebb belso fal van. A regi palya
+nem torlodott, az tovabbra is az elozo parancs alapertelmezett palyaja.
 
 Ez egyetlen launchbol elinditja:
 - a robot szimulaciojat,
@@ -209,9 +226,25 @@ source install/setup.bash
 
 Ezutan inditsd a navigaciot:
 
+# Navigacio a jelenlegi, alapertelmezett palyan:
+
 ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks_map.yaml
 
+# Navigacio az uj, nagyobb es nyitottabb palyan:
+
+ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open_world.sdf map:=/home/$USER/roboworks_map.yaml
+
 A map:= argumentumot mindig add meg.
+
+Fontos: a navigation soran hasznalt map fajlnak ahhoz a vilaghoz kell
+tartoznia, amelyet a world_file argumentummal elinditottal. Ha az uj palyan
+keszitettel terkepet, mentsd el kulon fajlnap, peldaul:
+
+ros2 run nav2_map_server map_saver_cli -f /home/$USER/roboworks_open_map
+
+Ezutan az uj palya navigacioja:
+
+ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open_world.sdf map:=/home/$USER/roboworks_open_map.yaml
 
 A navigacio a mentett terkepet, az AMCL lokalizaciot es a Nav2 stack-et
 hasznalja.
