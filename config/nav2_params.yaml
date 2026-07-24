@@ -137,3 +137,9 @@ planner_server:
     GridBased:
       plugin: "nav2_navfn_planner::NavfnPlanner"
 
+collision_monitor:
+  ros__parameters:
+    use_sim_time: true
+    enabled: false
+    observation_sources: []
+

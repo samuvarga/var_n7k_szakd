@@ -3,7 +3,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, TimerAction
+from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
@@ -45,5 +45,5 @@ def generate_launch_description():
         declare_use_sim_time_cmd,
         declare_rviz_config_cmd,
         declare_start_delay_cmd,
-        TimerAction(period=LaunchConfiguration('start_delay'), actions=[rviz]),
+        rviz,
     ])

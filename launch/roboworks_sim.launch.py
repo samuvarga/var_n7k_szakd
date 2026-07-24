@@ -50,7 +50,9 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ),
-            launch_arguments={'gz_args': ['-r -v 4 ', world_file]}.items(),
+        launch_arguments={
+            'gz_args': ['-r -v 4 ', world_file],
+        }.items(),
     )
 
     # prefer URDF if available (RViz/robot_state_publisher expects URDF), fall back to SDF

@@ -187,6 +187,9 @@ Mentsd el a terkepet:
 
 ros2 run nav2_map_server map_saver_cli -f /home/$USER/roboworks_map
 
+ros2 run nav2_map_server map_saver_cli \
+  -f /home/$USER/roboworks_open_map
+
 Ezeknek a fajloknak kell letrejonniuk:
 
 /home/$USER/roboworks_map.yaml
@@ -347,6 +350,44 @@ ls -lh /home/$USER/roboworks_map.pgm
 A navigacio helyes inditasa:
 
 ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks_map.yaml
+
+
+Hiba: A robot nem indul el a Nav2 Goal parancsara
+
+Ellenorzesek:
+
+1. Ellenorizd, hogy az AMCL korrekt poziciot adott-e (10. resz):
+   ros2 topic echo /amcl_pose --once
+   
+   Ha a pozicio X es Y koordinatai nagy szamok vagy ertetlennek tunnek,
+   akkor meg nem localized a robot.
+
+2. Ellenorizd a Nav2 node allapotait:
+   ros2 lifecycle get /map_server
+   ros2 lifecycle get /amcl
+   ros2 lifecycle get /controller_server
+   ros2 lifecycle get /planner_server
+   ros2 lifecycle get /bt_navigator
+   
+   Mindegyiknek ezt kell mutatnia: "active [3]"
+
+3. Ha valamelyik nem aktiv, probald meg ujrainditani a navigation launcht egy
+   teljes uj terminalbol:
+   
+   pkill -9 -f 'gz sim|parameter_bridge|robot_state_publisher|odom_tf_broadcaster|static_transform_publisher|slam_toolbox|rviz2|amcl|lifecycle_manager|controller_server|planner_server|map_server|bt_navigator|collision_monitor' 2>/dev/null || true
+   
+   Ezutan indits ujra a navigaciot uj terminalbol.
+
+4. Az RViz-ben ellenorizd, hogy a robot "Global Options" beallitasaban a
+   "Fixed Frame" "map"-ra van-e allitva.
+
+5. Ha a robot lokalizalt, de nem mozdulni ki, probald meg ezt az uj terminalban:
+   
+   ros2 topic pub -1 /goal_pose geometry_msgs/msg/PoseStamped \
+   "{header: {frame_id: 'map'}, pose: {position: {x: 1.0, y: 1.0}, orientation: {w: 1.0}}}"
+   
+   Ha ez sem segit, a nav2_params.yaml fajlban lehet hiba a planner vagy controller
+   konfiguraciojaban.
 
 
 Hiba: collision_monitor vagy Nav2 lifecycle hiba
