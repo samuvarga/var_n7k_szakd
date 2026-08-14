@@ -39,7 +39,7 @@ def generate_launch_description():
 
     roboworks_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_share, 'roboworks_sim.launch.py')
+            os.path.join(pkg_share, 'launch', 'roboworks_sim.launch.py')
         ),
         launch_arguments={
             'world_name': LaunchConfiguration('world_name'),
@@ -59,7 +59,7 @@ def generate_launch_description():
 
     rviz = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_share, 'launch_rviz.launch.py')
+            os.path.join(pkg_share, 'launch', 'launch_rviz.launch.py')
         ),
         launch_arguments={
             'use_sim_time': LaunchConfiguration('use_sim_time'),

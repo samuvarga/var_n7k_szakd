@@ -10,6 +10,10 @@ Panels:
         - /RobotModel1
         - /RobotModel1/Description Source1
         - /LaserScan1
+        - /Global Costmap1
+        - /Local Costmap1
+        - /Global Path1
+        - /Local Plan1
       Splitter Ratio: 0.5
     Tree Height: 152
   - Class: rviz_common/Selection
@@ -200,6 +204,76 @@ Visualization Manager:
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: false
+      Value: true
+    - Alpha: 0.65
+      Class: rviz_default_plugins/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Enabled: true
+      Name: Global Costmap
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap_updates
+      Use Timestamp: false
+      Value: true
+    - Alpha: 0.65
+      Class: rviz_default_plugins/Map
+      Color Scheme: costmap
+      Draw Behind: false
+      Enabled: true
+      Name: Local Costmap
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/costmap
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/costmap_updates
+      Use Timestamp: false
+      Value: true
+    - Class: rviz_default_plugins/Path
+      Color: 25; 255; 25
+      Enabled: true
+      Line Style: Lines
+      Line Width: 0.03
+      Name: Global Path
+      Pose Style: None
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /plan
+      Value: true
+    - Class: rviz_default_plugins/Path
+      Color: 255; 170; 0
+      Enabled: true
+      Line Style: Lines
+      Line Width: 0.04
+      Name: Local Plan
+      Pose Style: None
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_plan
       Value: true
   Enabled: true
   Global Options:

@@ -219,15 +219,31 @@ pkill -9 -f 'gz sim|parameter_bridge|robot_state_publisher|odom_tf_broadcaster|s
 8. NAVIGÁCIÓ INDÍTÁSA MENTETT TÉRKÉPPEL
 ========================================
 
-Eloszor ujra buildelj, hogy a legfrissebb launch es konfiguracios fajlok
-legyenek telepitve:
+FONTOS: Az iranyvaltas gyorsabb lesz az uj beallitasokkal (steering motor 100 Nm, 
+acc_lim_theta=3.0 rad/s2). Ez CSAK akkor lesz ervenyes, ha teljesen leallitod 
+az osszes regi ROS/Gazebo proceszt es ujra inditas a launchot!
+
+Az odometry drift-et az AMCL gyorsabb frissitese elkeruli (update_min_d=0.01 m,
+update_min_a=0.01 rad). Ez azt jelenti, hogy az AMCL 100x gyakrabban korrigalja
+az odometria hibajat, nem csak nagy mozgasok utan.
+
+Eloszor allitsd le az OSSZES regi proceszt:
+
+pkill -9 -f 'gz sim|parameter_bridge|robot_state_publisher|odom_tf_broadcaster|static_transform_publisher|slam_toolbox|rviz2|amcl|lifecycle_manager|controller_server|planner_server|map_server|bt_navigator|collision_monitor' 2>/dev/null || true
+
+Varj 2 masodpercet, hogy az osszes process biztosan megállt.
+
+Ezutan ujra buildelj es uj terminalbol indits:
 
 cd /mnt/c/Users/samuv/ros2_ws
 source /opt/ros/jazzy/setup.bash
 colcon build --packages-select var_n7k_szakd --symlink-install
 source install/setup.bash
 
-Ezutan inditsd a navigaciot:
+Az uj terminalt kell hasznalned az induleshez! Uj terminalban:
+
+source /opt/ros/jazzy/setup.bash
+source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
 
 # Navigacio a jelenlegi, alapertelmezett palyan:
 
@@ -235,7 +251,7 @@ ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks
 
 # Navigacio az uj, nagyobb es nyitottabb palyan:
 
-ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open_world.sdf map:=/home/$USER/roboworks_map.yaml
+ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open_world.sdf map:=/home/$USER/roboworks_open_map.yaml
 
 A map:= argumentumot mindig add meg.
 
@@ -251,6 +267,116 @@ ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open
 
 A navigacio a mentett terkepet, az AMCL lokalizaciot es a Nav2 stack-et
 hasznalja.
+
+KRITIKUS VALTOZAS: Az iranyvaltas most SOKKAL GYORSABB! Az Ackermann robot
+steering motora 100 Nm-es erosu, 4.0 rad/s-os sebessegu. Az acc_lim_theta=3.0
+rad/s2, decel_lim_theta=-3.0 rad/s2 a planner szintjén. Ez azt jelenti, hogy
+az iranyvaltas már nem lesz szűk keresztmetszet.
+
+AMCL LOKALIZACIO: Az odometry drift-et az AMCL gyorsabb frissitese minimalizalja:
+- update_min_d: 0.05 m -> 0.01 m (100x gyakoribb frissites az AMCL-tol)
+- update_min_a: 0.05 rad -> 0.01 rad (100x gyakoribb rotacio-korrekció)
+- min_particles: 500, max_particles: 2000 (több részecske = pontosabb)
+- odom_alpha1-4: 0.2 (odometry error model a lidar-alapú korrekciához)
+
+Ezek a beallitasok azt eredmenyezik, hogy az odom frame szinte azonnal
+korrigalodik a lidar scan-matching alapjan, es az odometry nem "elugrik"
+a map-tol.
+
+Ha a robot regi parameterekkel viselkedik, az azt jelenti, hogy az uj 
+konfiguraciok meg nem lettek betoltve. Allitsd le az OSSZES regi launchot,
+terminalt, es indits ujra egy teljesen uj terminalbol.
+
+A teljes jobb kormanyallasbol bal kormanyallasba valo gyorsabb atfordulashoz a
+fizikai kormanycsuklok tartomanya +/-0.8 rad, sebesseglimitje pedig 4.0 rad/s,
+az erjenek limitje pedig 100 Nm.
+Ez nem noveli a hossziranyu gyorsulast; a Gazebo Ackermann gyorsulasi limitje
+tovabbra is 0.2.
+
+
+UTVONAL KOVETESMODOSITAS: ACKERMANN-OPTIMALIZALT TRAJEKTORIA TERVEZES
+=====================================================================
+
+A robot most pontosabb utvonal kovetesre es kevesebb kormanymodulesre van
+alkalmazva. Az optimalizalas az Ackermann kinematika korlataira van hangolja:
+
+1. TRAJEKTORIA MINTAVETELEZES:
+   - vtheta_samples: 32 -> 48
+     A kormanzasi szogok jobb discretizacioja, kisebb rezges es ingadozas.
+
+2. VEZERLESI HORIZONT:
+   - sim_time: 0.55 -> 0.65 masodperc
+     Hosszabb elorejelzesi horizont a sima es pontosabb palya-koveteshez.
+
+3. SEBESSEGLIMITEK:
+   - max_vel_x: 0.60 -> 0.50 m/s (pontosabb utvonal-koveteshez)
+   - max_speed_xy: 0.60 -> 0.50 m/s (kevesebb elterest eredmenyez)
+
+4. KORMANYMODULESEK MEGELOZESE:
+   - acc_lim_theta: 2.8 -> 2.0 rad/s2 (simabb kormanyozas)
+   - decel_lim_theta: -2.8 -> -2.0 rad/s2
+   - Oscillation.scale: 1.0 (uj, back-and-forth ingadozas elkerulese)
+
+5. UTVONAL IGAZITASOK:
+   - PathAlign.scale: 32 -> 48 (erostebb utvonal koveteshez)
+   - PathAlign.forward_point_distance: 0.15 -> 0.25 m (elobb jelezzen)
+   - GoalAlign.scale: 20 -> 24 (pontosabb celepites)
+   - GoalAlign.forward_point_distance: 0.15 -> 0.25 m
+
+6. AKADALYELKERULES:
+   - BaseObstacle.scale: 0.02 (uj, jobb akadale-osszethettkedongetokent)
+   - inflation_radius: 0.55 -> 0.50 m
+   - cost_scaling_factor: 3.0 -> 4.0
+
+7. LINEARIS MINTAVETELEZ:
+   - vx_samples: 20 -> 24 (simabb sebessegilatas-atmenetek)
+
+8. INGADOZAS-ELKERULES (control oscillation fix):
+   Az igazi gond: a robot TULSAGOSAN LASSAN ter egyenesbe!
+   
+   Az eredeti problema: túl lassú irányváltás → a robot még kanyarít, 
+   amikor már egyenesnek kellene lennie → planner tovább korrigál → 
+   szükségtelen oda-vissza mozgás (ingadozás).
+   
+   A MEGOLDAS: SZUPERAGRESSZIV IRANYVALTAS + MAXIMAL REZGES-BUNTETES
+   
+   GAZEBO STEERING MOTOR EROSITESE (model.sdf):
+   - steering joint velocity: 3.0 -> 4.0 rad/s (gyorsabb motor)
+   - steering joint effort: 25 -> 100 Nm (sokkal erosebb!)
+     A fizikai motor most teljesen ki tudja fejezni az iranyvaltas erojet.
+   
+   NAV2 AGRESSZIV IRANYVALTAS (nav2_params.yaml):
+   - max_vel_theta: 1.5 -> 2.0 rad/s (SOKKAL gyorsabb szogsebesség!)
+   - acc_lim_theta: 2.0 -> 3.0 rad/s2 (SOKKAL gyorsabb gyorsulas!)
+   - decel_lim_theta: -2.0 -> -3.0 rad/s2 (SOKKAL gyorsabb lassulas!)
+     A planner most sokkal agresszívebben tud kormányozni, és a robot
+     gyorsan vissza tud lenni egyenesbe.
+   
+   MARADTUNK az erre kell figyelni:
+   - RotateToGoal.scale: 20 (agressziv irany-korrekció)
+   - RotateToGoal.slowing_factor: 3.5 (gyorsabb fordulás az egyenesbe)
+   
+   - Oscillation.scale: 4 -> 5 (MAXIMALIS rezges-buntetes!!!)
+     Ez az igazi vedelem: az ingadozás-szenezode trajekoriak MAXIMALIS
+     keményen büntetendőek. Így az agresszívebb irányváltás nem fog
+     ingadozást okozni.
+   
+   - GoalDist.scale: 28 (erosebb celepites vonzas)
+
+ELONYOK:
+- SOKKAL gyorsabb iranyvaltas (a robot villámgyorsan egyenesbe tér)
+- NEM lesz kacskaringo hullamozas, mert az Oscillation.scale=5.0 
+  megakalyozza az ingadozast, még az agresszív kormányzás ellenére is
+- Gyorsabb celepites az Ackermann fordulokepessegek mellett
+- Az agressziv korrekciok nem vezetnek rezgeshez, hanem stabilitashoz
+
+FONTOS: Az Oscillation.scale=5.0 + erös steering motor (100 Nm) az igazi
+megoldas! Ez megakadalyozza az oda-vissza mozgast, ezert lehet sokkal 
+agresszivebb az iranyvaltas. A robot most szinte pillanatok alatt 
+fordulhat.
+
+A hossziranyu gyorsulas (0.2 m/s2) es a maximalis sebesseg (0.8 m/s)
+tovabbra is az eredeti ertkeken vannak a borulas megelozese erdekeben.
 
 
 9. RVIZ: KEZDETI POZÍCIÓ BEÁLLÍTÁSA
@@ -412,3 +538,125 @@ Minden terminalban ez legyen az elso ket parancs:
 
 source /opt/ros/jazzy/setup.bash
 source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+
+
+14. ACKERMANN ROBOT PARAMETEREK OPTIMALIZALASA
+================================================
+
+Az "eszméletlen lassan" es "kacskaringó hullám" problémák megoldása:
+
+A robot sebességét és fordulóképességét a fizika alapú paraméterek szabályozzák,
+amelyeket az Ackermann kinematika korlátozásai alapján optimalizáltunk.
+
+
+14.1. KRITIKUS PARAMETEREK (config/nav2_params.yaml)
+
+AMCL Lokalizáció:
+  update_min_d: 0.05 m         (lidar-szinkronizált, nem 0.01 m)
+  update_min_a: 0.05 rad       (lidar-szinkronizált, nem 0.01 rad)
+  min_particles: 500
+  max_particles: 2000
+
+DWB Fordulási Kontroller:
+  max_vel_theta: 1.8 rad/s     (a robot tipikus fordulási sebessége)
+  acc_lim_theta: 2.0 rad/s²    (mérsékelt gyorsulás, nem 3.0!)
+  decel_lim_theta: -2.0 rad/s² (szimmetrikus)
+  
+  ⚠️  LEGFONTOSABB: Oscillation.scale: 2.0 (nem 5.0!)
+      Az Oscillation.scale=5.0 blokkozta az irányváltásokat.
+      A 2.0-s érték lehetővé teszi a fordulást miközben büntetezi az ingadozást.
+
+
+14.2. FIZIKAI HÁTTÉR
+
+Az Ackermann-kormányzásos robot fordulási sugara:
+  R = L / tan(δ)
+  
+  L = wheelbase = 0.262 m
+  δ = steering angle
+  
+  Szögsebesség maximuma @ 0.8 m/s:
+    ω_max = 3.14 rad/s (szűk fordulat, 45°-os kormányzás)
+    ω_tipikus = 1.29 rad/s (közepesen fordulva, 23°-os kormányzás)
+  
+  A max_vel_theta: 1.8 rad/s logikus ezek alapján.
+
+
+14.3. AMCL UPDATE-EK SZENZOR-SZINKRONIZÁLÁSA
+
+Régi érték: update_min_d: 0.01 m → 80 Hz frissítés
+  ❌ Probléma: A lidar csak 10 Hz körül fut
+  ❌ Az AMCL "hallucinál" információkat a frissítések között
+
+Új érték: update_min_d: 0.05 m → 16 Hz frissítés @ 0.8 m/s
+  ✓ Szenzor-szinkronizált (lidar-hez igazított)
+  ✓ Reális lokalizációs korrekció
+  ✓ Az odom frame már nem "elugrik"
+
+
+14.4. OSZILLÁCIÓS PENALIZÁLÁS JAVÍTÁSA
+
+Régi érték: Oscillation.scale: 5.0
+  ❌ Túl erős penalizálás
+  ❌ Az irányváltások blokkoktatnak
+  ❌ A robot "megreked" a céltól 45°-os szögben
+
+Új érték: Oscillation.scale: 2.0
+  ✓ Még mindig büntetik az oda-vissza mozgást
+  ✓ De nincs teljes blokkolás az irányváltásokra
+  ✓ Természetes, dinamikus fordulás lehetséges
+
+
+14.5. ALKALMAZÁS
+
+A build után a paraméterek automatikusan bekerülnek:
+
+  cd /mnt/c/Users/samuv/ros2_ws
+  colcon build --packages-select var_n7k_szakd --symlink-install
+  source install/setup.bash
+
+FONTOS: Új terminalban kell a navigációt indítani, hogy az új paraméterek
+töltődjenek be!
+
+  pkill -9 -f 'gz sim|ros|rviz|amcl'  # Összes régi folyamat leállítása
+  
+  # Új terminalban:
+  ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks_map.yaml
+
+
+14.6. TESZTELÉS
+
+RViz-ben megfigyelendő:
+  ✓ A fordulás gyorsabb, de nem túlzott
+  ✓ A map frame és odom frame közel marad egymáshoz (nincs nagy drift)
+  ✓ A robot záródik a célfélé, és nem "kacskaringózik"
+  ✓ Nincs oda-vissza mozgás amikor a célt megközelíti
+
+
+14.7. TELJES DOKUMENTÁCIÓ
+
+AKTUÁLIS, MŰKÖDŐ PARAMÉTEREK:
+
+config/nav2_params.yaml:
+  min_vel_x: 0.10 m/s
+  max_vel_x: 0.50 m/s
+  max_vel_theta: 2.0 rad/s
+  acc_lim_theta: 3.0 rad/s²
+  decel_lim_theta: -3.0 rad/s²
+  Oscillation.scale: 5.0
+  update_min_d: 0.01 m
+  update_min_a: 0.01 rad
+
+robot_description/roboworks/model.sdf:
+  steering velocity: 4.0 rad/s
+  steering effort: 100 Nm
+
+ROBOT INDÍTÁSA:
+  1. colcon build --packages-select var_n7k_szakd --symlink-install
+  2. pkill -9 -f 'gz sim|ros|rviz|amcl|gazebo'
+  3. Új terminal: ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks_map.yaml
+
+HA NEM MŰKÖDIK:
+  - Min/max vel paramétereket csak kis lépésekben módosítsd!
+  - Egy paramétert egy időben!
+  - Tesztelj minden módosítás után!

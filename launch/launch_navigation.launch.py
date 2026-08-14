@@ -62,6 +62,7 @@ def generate_launch_description():
             'params_file': LaunchConfiguration('params_file'),
             'use_composition': 'False',
             'use_respawn': 'False',
+            'container_name': 'nav2_localization_container',
         }.items(),
     )
 

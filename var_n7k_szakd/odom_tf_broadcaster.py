@@ -63,7 +63,12 @@ class OdomTfBroadcaster(Node):
 
     def odom_callback(self, msg: Odometry) -> None:
         transform = _build_transform(msg, self.parent_frame, self.child_frame)
-        transform.header.stamp = self._next_stamp()
+        if transform.header.stamp.sec == 0 and transform.header.stamp.nanosec == 0:
+            transform.header.stamp = self._next_stamp()
+        else:
+            transform.header.stamp = _ensure_monotonic_stamp(
+                transform.header.stamp, self._last_publish_time)
+            self._last_publish_time = transform.header.stamp
         self.tf_broadcaster.sendTransform(transform)
 
 
