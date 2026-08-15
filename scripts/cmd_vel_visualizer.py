@@ -21,17 +21,17 @@ class CmdVelVisualizer(Node):
     def __init__(self):
         super().__init__('cmd_vel_visualizer')
         
-        # Subscribers
+        # Subscribers - Use ABSOLUTE topic names
         self.sub_raw = self.create_subscription(
             Twist,
-            'input_raw_cmd_vel',  # /cmd_vel
+            '/cmd_vel',  # DWB raw output (RED)
             self.callback_raw,
             qos_profile=rclpy.qos.QoSProfile(depth=1)
         )
         
         self.sub_smooth = self.create_subscription(
             Twist,
-            'input_smooth_cmd_vel',  # /model/roboworks/cmd_vel_smooth
+            '/cmd_vel_smoothed',  # Smoothed output (GREEN)
             self.callback_smooth,
             qos_profile=rclpy.qos.QoSProfile(depth=1)
         )
@@ -39,7 +39,7 @@ class CmdVelVisualizer(Node):
         # Publisher
         self.marker_pub = self.create_publisher(
             MarkerArray,
-            'cmd_vel_visualization',
+            '/cmd_vel_markers',  # Absolute topic name
             qos_profile=rclpy.qos.QoSProfile(depth=1)
         )
         
@@ -49,9 +49,9 @@ class CmdVelVisualizer(Node):
         
         self.get_logger().info(
             "CmdVelVisualizer initialized\n"
-            "  Subscribing to: 'input_raw_cmd_vel' (DWB output - RED)\n"
-            "                  'input_smooth_cmd_vel' (Smoothed - GREEN)\n"
-            "  Publishing to: 'cmd_vel_visualization' (RViz MarkerArray)"
+            "  Subscribing to: '/cmd_vel' (DWB raw output - RED)\n"
+            "                  '/cmd_vel_smoothed' (Smoothed - GREEN)\n"
+            "  Publishing to: '/cmd_vel_markers' (RViz MarkerArray)"
         )
     
     def callback_raw(self, msg: Twist):

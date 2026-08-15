@@ -25,16 +25,17 @@ class CmdVelSmoother(Node):
         self.smoothing_factor = self.get_parameter('smoothing_factor').get_parameter_value().double_value
         
         # Subscribers and publishers
+        # Use ABSOLUTE topic names to avoid remapping issues
         self.subscription = self.create_subscription(
             Twist, 
-            'input_cmd_vel', 
+            '/cmd_vel',  # DWB raw output
             self.cmd_vel_callback, 
             qos_profile=rclpy.qos.QoSProfile(depth=1)
         )
         
         self.publisher = self.create_publisher(
             Twist, 
-            'output_cmd_vel', 
+            '/cmd_vel_smoothed',  # Smoothed output for Gazebo bridge
             qos_profile=rclpy.qos.QoSProfile(depth=1)
         )
         
@@ -50,8 +51,8 @@ class CmdVelSmoother(Node):
             f"CmdVelSmoother initialized with smoothing_factor={self.smoothing_factor}"
         )
         self.get_logger().info(
-            f"  Subscribing to: 'input_cmd_vel'\n"
-            f"  Publishing to: 'output_cmd_vel'\n"
+            f"  Subscribing to: '/cmd_vel' (DWB raw)\n"
+            f"  Publishing to: '/cmd_vel_smoothed' (smoothed for bridge)\n"
             f"  Formula: smoothed = {self.smoothing_factor} * prev + {1.0-self.smoothing_factor} * current"
         )
     

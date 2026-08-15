@@ -76,29 +76,24 @@ def generate_launch_description():
     # CMD_VEL Smoother Node
     # Applies exponential moving average smoothing to DWB output
     # to reduce oscillation and smooth steering transitions
+    # Subscribes to /cmd_vel (DWB raw)
+    # Publishes to /cmd_vel_smoothed (smoothed for Gazebo bridge)
     cmd_vel_smoother = Node(
         package='var_n7k_szakd',
         executable='ros2_cmd_vel_smoother',
         name='cmd_vel_smoother',
-        parameters=[{'smoothing_factor': 0.5}],
-        remappings=[
-            ('input_cmd_vel', '/cmd_vel'),
-            ('output_cmd_vel', '/model/roboworks/cmd_vel_smooth'),
-        ],
+        parameters=[{'smoothing_factor': 0.15}],
     )
 
     # CMD_VEL Visualizer Node
     # Visualizes raw (RED) and smoothed (GREEN) commands in RViz
     # Shows arrows for steering angle and velocity magnitude
+    # Subscribes to /cmd_vel (raw) and /cmd_vel_smoothed (smoothed)
+    # Publishes to /cmd_vel_markers (RViz MarkerArray)
     cmd_vel_visualizer = Node(
         package='var_n7k_szakd',
         executable='cmd_vel_visualizer',
         name='cmd_vel_visualizer',
-        remappings=[
-            ('input_raw_cmd_vel', '/cmd_vel'),
-            ('input_smooth_cmd_vel', '/model/roboworks/cmd_vel_smooth'),
-            ('cmd_vel_visualization', '/cmd_vel_markers'),
-        ],
     )
 
     return LaunchDescription([
