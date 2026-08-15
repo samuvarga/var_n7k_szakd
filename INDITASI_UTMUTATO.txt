@@ -965,3 +965,158 @@ Ha az RViz-ben nem jelenik meg a vizualizáció:
 
   4. Mentsd az RViz konfigurációt (File → Save Config As)
      majd újra betöltést követően meg kell maradnia
+
+
+17. HIBAELHÁRÍTÁS: ROBOT NEM INDUL EL CÉL KÜLDÉS UTÁN
+=====================================================
+
+Ha a robot célt kap az RViz-ben, de nem indul el (rögtön "Reached the goal!"):
+
+  [controller_server-12] [ERROR] [time] [tf_help]: Transform data too old
+  [controller_server-12] [INFO] [time] [controller_server]: Reached the goal!
+
+
+17.1. GYÖKÉR OKA: ODOMETRY FRISSÍTÉSI FREKVENCIA
+
+A robot csak 1 Hz-en küldi az odometry frame-et, amit az AMCL és controller 
+nem tud követni (20 Hz-en futnak). Ezért "összeakadnak" a frame-ek.
+
+Eredmény: Az odom timestamp túl régi lesz ahhoz, hogy konvertálni lehessen 
+a map frame-re → Transform error → Robot azonnal "Reached goal"-nak gondolja magát.
+
+
+17.2. PROBLÉMA AZONOSÍTÁSA
+
+Terminal 1 - Odom frissítés frekvenciájának ellenőrzése:
+
+  ros2 topic hz /odom
+
+Ha az output 1.00 Hz vagy alacsonyabb → Ez a probléma!
+
+
+Terminal 2 - Transform cache frissítésének ellenőrzése:
+
+  ros2 run tf2_tools view_frames
+
+Ha az odom → base_footprint TF frissítése túl régi → Transfer sync hiba!
+
+
+17.3. MEGOLDÁS: ODOMETRY FREKVENCIA NÖVELÉSE
+
+Az odom_publish_frequency paraméter a Gazebo Ackermann plugin-ban 
+lett emelt 1 Hz-ről 20 Hz-re.
+
+robot_description/roboworks/model.sdf:
+
+  <odom_publish_frequency>20</odom_publish_frequency>
+
+Ez szinkronba hozza az odometry-t a DWB controller-rel (20 Hz).
+
+
+17.4. ALKALMAZÁS
+
+Az SDF fájl SDF (nem szöveges) formátum. A változás után:
+
+  1. Teljes build:
+  
+     cd /mnt/c/Users/samuv/ros2_ws
+     source /opt/ros/jazzy/setup.bash
+     colcon build --packages-select var_n7k_szakd --symlink-install
+     source install/setup.bash
+
+  2. Gazebo és ROS2 folyamatok teljes leállítása:
+  
+     pkill -9 -f 'gz sim|gazebo'
+     pkill -9 -f 'ros|rviz'
+     
+  3. TÚJ TERMINAL-ben indítsd újra a navigációt:
+  
+     source /opt/ros/jazzy/setup.bash
+     source /mnt/c/Users/samuv/ros2_ws/install/setup.bash
+     
+     ros2 launch var_n7k_szakd launch_navigation.launch.py \
+       world_file:=roboworks_open_world.sdf \
+       map:=/home/$USER/roboworks_open_map.yaml
+
+
+17.5. TESZTELÉS
+
+1. Az odom frekvencia ellenőrzése:
+   ros2 topic hz /odom
+   
+   Várható: ~20.00 Hz (nem 1.00 Hz!)
+
+2. TF frame-ek ellenőrzése:
+   ros2 run tf2_tools view_frames
+
+3. Robot kezdeti lokalizálása:
+   - RViz: 2D Pose Estimate
+   - Jelöld meg a robot valódi helyét a térképen
+
+4. Célt küld:
+   - RViz: Nav2 Goal
+   - Robot MOST mozduljon meg!
+
+
+17.6. HA MÉG MINDIG NEM MŰKÖDIK
+
+Ha a robot még mindig nem mozdul meg:
+
+  1. Ellenőrizd a csatorna topicokat:
+     ros2 topic list | grep -E 'odom|cmd_vel'
+
+  2. Ellenőrizd az odom üzeneteket:
+     ros2 topic echo /odom --once
+
+  3. Logok ellenőrzése:
+     - Az ERROR üzenetekben szerepel-e "Transform data too old"?
+     - Ha igen: Meg nem frissült az odom frekvencia
+     
+  4. Controller debug:
+     ros2 lifecycle get /controller_server
+     
+     Kell lennie: "active [3]"
+     
+  5. Teljes restart:
+     
+     pkill -9 -f 'gz|gazebo|ros'
+     sleep 2
+     
+     # ÚJ terminalban:
+     cd /mnt/c/Users/samuv/ros2_ws
+     source /opt/ros/jazzy/setup.bash
+     source install/setup.bash
+     colcon build --packages-select var_n7k_szakd --symlink-install
+     source install/setup.bash
+     
+     ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks_map.yaml
+
+
+17.7. ODOMETRY FREKVENCIA MAGYARÁZATA
+
+Az odom_publish_frequency paraméter azt határozza meg, hogy a Gazebo 
+Ackermann plugin milyen gyorsan publikálja az odometry frame-eket az ROS2-be.
+
+  1 Hz  = 1 üzenet/másodperc  = ~1000 ms közötti késleltetés
+  20 Hz = 20 üzenet/másodperc = ~50 ms közötti frissítés
+
+A DWB controller 20 Hz-en fut, tehát az odom-nak is ~20 Hz-en kell futnia.
+Ha az odom csak 1 Hz-en van:
+
+  ❌ Controller 20x gyorsabban vár frissítésre, mint amikor kapja
+  ❌ Transform cache szinkronizálási hibák
+  ❌ "Transform data too old" hibák
+  ❌ Robot nem tud mozdulni (TF conflict)
+
+
+17.8. JÖVŐBENI BEÁLLÍTÁSOK
+
+Ha az odom 20 Hz túl lassúnak vagy gyorsnak érzi:
+
+  - Lassabb (10 Hz): `<odom_publish_frequency>10</odom_publish_frequency>`
+  - Gyorsabb (30 Hz): `<odom_publish_frequency>30</odom_publish_frequency>`
+  
+  Javasolt értékek:
+  - Valós robot: 10 Hz
+  - Gazebo szimuláció: 20 Hz
+  - Gyors szimulációs teszt: 30+ Hz
