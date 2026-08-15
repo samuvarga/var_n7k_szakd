@@ -660,3 +660,169 @@ HA NEM MŰKÖDIK:
   - Min/max vel paramétereket csak kis lépésekben módosítsd!
   - Egy paramétert egy időben!
   - Tesztelj minden módosítás után!
+
+
+15. CMD_VEL SMOOTHING - CSÖKKENTETT OSZCILLÁCIÓ
+=================================================
+
+A Nav2 DWB planner kimenete néha "ugrálva" vehet fel parancsokat, ami 
+oszcillációhoz (oda-vissza mozgáshoz) vezethet. A "Smoothing Node" ezt
+megoldja az exponential moving average (EMA) módszerével.
+
+
+15.1. SMOOTHING MOTOR
+
+A smoothing node az alábbi képlet alapján működik:
+
+  smooth_steering(t) = alpha * smooth_steering(t-1) + (1-alpha) * current_steering(t)
+
+Például alpha=0.5 esetén:
+  Új érték = 50% előző + 50% jelenlegi
+
+Ez az eredeti "Simple Pursuit" megoldás smoothing mechanizmusa!
+
+
+15.2. RENDSZER TOPOLÓGIA
+
+Az eredeti (smoothing nélkül):
+
+  Nav2 DWB Planner (20 Hz)
+    ↓
+  /cmd_vel (DWB raw output)
+    ↓
+  Gazebo Ackermann Plugin
+    ↓
+  Robot
+
+Az új (smoothing-gel):
+
+  Nav2 DWB Planner (20 Hz)
+    ↓
+  /cmd_vel (DWB raw output)
+    ↓
+  Smoothing Node (20 Hz) ← INTERPOLATES
+    ↓
+  /model/roboworks/cmd_vel_smooth (smoothed)
+    ↓
+  Gazebo Ackermann Plugin
+    ↓
+  Robot
+
+
+15.3. SMOOTHING PARAMÉTER BEÁLLÍTÁSA
+
+Az egész smoothing a launch fájlban állítható be:
+
+  launch_navigation.launch.py fájlban:
+  
+  cmd_vel_smoother = Node(
+      ...
+      parameters=[{'smoothing_factor': 0.5}],
+      ...
+  )
+
+SMOOTHING_FACTOR értékek:
+
+  0.0 = nincs smoothing (azonnal átvesz új parancsot)
+  0.3 = enyhe smoothing (kevesebb interpoláció)
+  0.5 = mérsékelt smoothing (javasolt alapértelmezés)
+  0.7 = erős smoothing (lassabb fordulatok)
+  0.9 = nagyon erős smoothing (túl lassan reagál)
+  1.0 = nem ajánlott (robot nem mozdul)
+
+
+15.4. MÓDOSÍTÁS ÉS TESZTELÉS
+
+A smoothing_factor módosításához:
+
+1. Szerkeszd meg a launch fájlt:
+   
+   nano /mnt/c/Users/samuv/ros2_ws/src/var_n7k_szakd/launch/launch_navigation.launch.py
+
+2. Keress rá erre:
+   
+   parameters=[{'smoothing_factor': 0.5}],
+
+3. Módosítsd az értéket (pl. 0.3-ra vagy 0.7-re)
+
+4. Build:
+   
+   cd /mnt/c/Users/samuv/ros2_ws
+   colcon build --packages-select var_n7k_szakd --symlink-install
+   source install/setup.bash
+
+5. Indítsd újra a navigációt ÚJ terminalban (fontos!)
+
+6. Tesztelj az RViz-ben: figyeld meg, hogy simábbak-e a fordulatok
+
+
+15.5. MONITOROZÁS
+
+A smoothing működésének ellenőrzése:
+
+Terminal 1 - DWB raw output:
+  ros2 topic echo /cmd_vel
+
+Terminal 2 - Smoothed output:
+  ros2 topic echo /model/roboworks/cmd_vel_smooth
+
+Ha az első ugrálva változik, de a második sima görbe, akkor 
+a smoothing működik.
+
+Graph ellenőrzés rqt-ben:
+  rqt_plot /cmd_vel/angular/z /model/roboworks/cmd_vel_smooth/angular/z
+
+Ez megmutatja az egyes görbéket.
+
+
+15.6. AJÁNLOTT ÉRTÉKEK
+
+Finom beállások:
+
+  - Gyors fordulatok, de simábban: smoothing_factor = 0.3
+  - Kiegyensúlyozott (javasolt): smoothing_factor = 0.5
+  - Lassú, nagyon sima fordulatok: smoothing_factor = 0.7
+
+Az Oscillation.scale paraméterrel kombinálva:
+
+  - smoothing_factor=0.5 + Oscillation.scale=2.0
+    → Természetes, sima fordulatok, minimális rezgés
+  
+  - smoothing_factor=0.5 + Oscillation.scale=5.0
+    → Erősen simított, de még agresszív
+
+
+15.7. HA A SMOOTHING MEGÖL EGY PARAMÉTERT
+
+Ha a smoothing túl lassúnak érzi:
+
+  1. Csökkentsd a smoothing_factor-t (0.5 → 0.3)
+  2. Vagy teljesen kikapcsolhatod: smoothing_factor=0.0
+
+Ha nincs elég smoothing:
+
+  1. Emeld a smoothing_factor-t (0.5 → 0.7)
+  2. De teszteld, mert túl nagy érték lassú reagálást okoz
+
+
+15.8. SMOOTHING + ORIGINAL PARAMÉTEREK
+
+Az eredeti robotverseny konfigurációval a smoothing érdekesen működik:
+
+  - Motor (1.0 rad/s, 25 Nm) = már alapból lassú
+  - Smoothing (0.5) = még lassabb, de nagyon stabil
+
+Ajánlás: smoothing_factor = 0.3 (enyhe smoothing)
+  → Gyorsabb fordulatok, de még simák
+
+
+ÖSSZEFOGLALÓ: A SMOOTHING LÉNYEGE
+==================================
+
+Az eredeti "Simple Pursuit" algo pontossága a smoothing-ból jött.
+Most ugyanezt az elvet alkalmazod a NAV2-höz, de megtartod:
+  ✓ Global NavFn planner
+  ✓ AMCL lokalizáció
+  ✓ DWB local planner
+
+Csak simítod ki az utolsó lépést (cmd_vel → robot).

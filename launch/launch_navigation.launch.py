@@ -5,6 +5,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, Shutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def _require_map(context):
@@ -72,6 +73,20 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time')}.items()
     )
 
+    # CMD_VEL Smoother Node
+    # Applies exponential moving average smoothing to DWB output
+    # to reduce oscillation and smooth steering transitions
+    cmd_vel_smoother = Node(
+        package='var_n7k_szakd',
+        executable='ros2_cmd_vel_smoother',
+        name='cmd_vel_smoother',
+        parameters=[{'smoothing_factor': 0.5}],
+        remappings=[
+            ('input_cmd_vel', '/cmd_vel'),
+            ('output_cmd_vel', '/model/roboworks/cmd_vel_smooth'),
+        ],
+    )
+
     return LaunchDescription([
         use_sim_time,
         autostart,
@@ -83,5 +98,6 @@ def generate_launch_description():
         simulation,
         localization,
         navigation,
+        cmd_vel_smoother,
         rviz,
     ])
