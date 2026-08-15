@@ -21,9 +21,9 @@ def generate_launch_description():
     nav2_share = get_package_share_directory('nav2_bringup')
 
     use_sim_time = DeclareLaunchArgument(
-        'use_sim_time', default_value='True', description='Use simulation clock')
+        'use_sim_time', default_value='true', description='Use simulation clock')
     autostart = DeclareLaunchArgument(
-        'autostart', default_value='True', description='Automatically start Nav2')
+        'autostart', default_value='true', description='Automatically start Nav2')
     params_file = DeclareLaunchArgument(
         'params_file',
         default_value=os.path.join(package_share, 'config', 'nav2_params.yaml'),
