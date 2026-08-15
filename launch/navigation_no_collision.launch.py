@@ -61,26 +61,6 @@ def generate_launch_description():
         actions=[
             SetParameter('use_sim_time', use_sim_time),
             Node(
-                package='nav2_costmap_2d', executable='costmap_2d_node',
-                name='global_costmap',
-                output='screen', respawn=use_respawn,
-                respawn_delay=2.0,
-                parameters=[configured_params],
-                arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('costmap', 'global_costmap/costmap'),
-                                        ('costmap_updates', 'global_costmap/costmap_updates')],
-            ),
-            Node(
-                package='nav2_costmap_2d', executable='costmap_2d_node',
-                name='local_costmap',
-                output='screen', respawn=use_respawn,
-                respawn_delay=2.0,
-                parameters=[configured_params],
-                arguments=['--ros-args', '--log-level', log_level],
-                remappings=remappings + [('costmap', 'local_costmap/costmap'),
-                                        ('costmap_updates', 'local_costmap/costmap_updates')],
-            ),
-            Node(
                 package='nav2_controller', executable='controller_server',
                 output='screen', respawn=use_respawn,
                 respawn_delay=2.0, parameters=[configured_params],
