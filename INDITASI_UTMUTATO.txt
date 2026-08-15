@@ -826,3 +826,142 @@ Most ugyanezt az elvet alkalmazod a NAV2-höz, de megtartod:
   ✓ DWB local planner
 
 Csak simítod ki az utolsó lépést (cmd_vel → robot).
+
+
+16. CMD_VEL VIZUALIZÁCIÓ AZ RVIZ-BEN
+====================================
+
+Az RViz-ben kétszínű nyilakkal lehet megjeleníteni az adat-áramlást:
+  - PIROS nyíl: Raw DWB output (simítás előtt)
+  - ZÖLD nyíl: Smoothed output (simítás után)
+
+Ez segít a smoothing hatásának megfigyelésében.
+
+
+16.1. AUTOMATIKUS VIZUALIZÁCIÓ
+
+A vizualizáció node automatikusan indul a launch_navigation.launch.py indításakor.
+
+Nem kell külön parancst futtatni, az alábbiak történnek:
+
+1. DWB local planner → /cmd_vel topic
+2. Visualizer node hallgatja mindkettőt:
+   - /cmd_vel (raw) → PIROS NYÍL
+   - /model/roboworks/cmd_vel_smooth (smooth) → ZÖLD NYÍL
+3. Publikál /cmd_vel_markers topic-ot
+4. RViz megjelenít az alaptérképre
+
+
+16.2. RVIZ-BEN A VIZUALIZÁCIÓ HOZZÁADÁSA
+
+Az RViz automatikusan betölti az alapértelmezett konfigurációt, de ha 
+nincs még hozzáadva a vizualizáció:
+
+1. Az RViz-ben kattints a "Add" gombra (bal oldali panel)
+2. Válaszd ki a "By topic" fület
+3. Keress rá "/cmd_vel_markers" topic-ra
+4. Válaszd ki a "MarkerArray"-t
+5. Kattints "OK"-ra
+
+Vagy:
+
+1. Megnyitod az RViz konfigurációs fájlt:
+   /mnt/c/Users/samuv/ros2_ws/src/var_n7k_szakd/rviz/config.rviz
+
+2. Hozzáadod ezt a szekciót az "Displays:" rész alá:
+
+   - Class: rviz_common/MarkerArray
+     Enabled: true
+     Marker Topic: /cmd_vel_markers
+     Name: CmdVel Visualization
+     Namespaces:
+       enabled: true
+
+
+16.3. MIT JELENT A VIZUALIZÁCIÓ
+
+PIROS NYÍL (Raw output):
+  - Irány: Steering angle (angular.z)
+  - Hossz: Linear velocity (linear.x)
+  - Ha ugrálva változik → nincs smoothing
+  - Ha magasabb értékeket mutat → erősebb DWB korrekció
+
+ZÖLD NYÍL (Smoothed output):
+  - Irány: Simított steering angle
+  - Hossz: Simított linear velocity
+  - Sima és fagyott mozgás → smoothing működik
+  - Mindig "tusszázik" a PIROS után → EMA simítás aktív
+
+TEXT OVERLAY:
+  - Numerikus értékek: v (velocity) és ω (steering angle)
+  - Összehasonlításra lehet használni a rawés smooth közötti különbséget
+
+
+16.4. JÓ SMOOTHING JELZÉSE
+
+Megfigyelendő az RViz-ben:
+
+  ✓ ZÖLD nyíl sokkal simábbnak tűnik, mint a PIROS
+  ✓ PIROS ugrálhat, ZÖLD stabil
+  ✓ ZÖLD minimális késleltetésre mutat (1-2 frame késés)
+  ✓ Text felül numerikus értékek egyre kevésbé különböznek
+
+Rossz smoothing:
+
+  ❌ PIROS és ZÖLD majdnem azonos (smoothing_factor túl kicsi)
+  ❌ ZÖLD túl későn reagál (smoothing_factor túl nagy)
+  ❌ Mindkettő ugrálva mozog (smoothing node nem fut)
+
+
+16.5. MONITOROZÁS TERMINALBÓL
+
+Helyeshez Debug kimenetek:
+
+  # Ellenőrizd, hogy a node-ok futnak-e:
+  ros2 node list
+
+  Várja erre:
+  /cmd_vel_smoother
+  /cmd_vel_visualizer
+
+  # Topicok ellenőrzése:
+  ros2 topic list | grep cmd_vel
+
+  Kell lennie:
+  /cmd_vel (raw DWB)
+  /model/roboworks/cmd_vel_smooth (smoothed)
+  /cmd_vel_markers (visualization)
+
+  # Topic tartalmának ellenőrzése:
+  ros2 topic echo /cmd_vel
+  ros2 topic echo /model/roboworks/cmd_vel_smooth
+  ros2 topic echo /cmd_vel_markers
+
+
+16.6. SMOOTHING FACTOR MÓDOSÍTÁSA ÉS VIZUALIZÁCIÓ
+
+Ha változtatsz a smoothing_factor-on:
+
+  smoothing_factor = 0.0 → PIROS és ZÖLD szinte azonos
+  smoothing_factor = 0.3 → enyhe simítás (ZÖLD alig késik)
+  smoothing_factor = 0.5 → javasolt (ZÖLD tisztán simább)
+  smoothing_factor = 0.7 → erős simítás (ZÖLD lassabb)
+
+Az RViz-ben ezek a változások azonnal látszódnak!
+
+
+16.7. RVIZ KONFIGURÁCIÓS HINT
+
+Ha az RViz-ben nem jelenik meg a vizualizáció:
+
+  1. Ellenőrizd, hogy a cmd_vel_visualizer node fut:
+     ros2 node list | grep visualizer
+
+  2. Ellenőrizd a topic-ot:
+     ros2 topic echo /cmd_vel_markers --once
+
+  3. Ha az RViz nem frissíti, kattints a "Time" panelre
+     és válassz "Fixed Frame"-nek a "base_link"-et
+
+  4. Mentsd az RViz konfigurációt (File → Save Config As)
+     majd újra betöltést követően meg kell maradnia

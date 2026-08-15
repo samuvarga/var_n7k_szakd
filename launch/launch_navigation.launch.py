@@ -87,6 +87,20 @@ def generate_launch_description():
         ],
     )
 
+    # CMD_VEL Visualizer Node
+    # Visualizes raw (RED) and smoothed (GREEN) commands in RViz
+    # Shows arrows for steering angle and velocity magnitude
+    cmd_vel_visualizer = Node(
+        package='var_n7k_szakd',
+        executable='cmd_vel_visualizer',
+        name='cmd_vel_visualizer',
+        remappings=[
+            ('input_raw_cmd_vel', '/cmd_vel'),
+            ('input_smooth_cmd_vel', '/model/roboworks/cmd_vel_smooth'),
+            ('cmd_vel_visualization', '/cmd_vel_markers'),
+        ],
+    )
+
     return LaunchDescription([
         use_sim_time,
         autostart,
@@ -99,5 +113,6 @@ def generate_launch_description():
         localization,
         navigation,
         cmd_vel_smoother,
+        cmd_vel_visualizer,
         rviz,
     ])
