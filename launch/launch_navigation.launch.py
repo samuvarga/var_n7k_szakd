@@ -2,10 +2,10 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, Shutdown
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, Shutdown, GroupAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
+from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import RewrittenYaml
 
@@ -81,30 +81,40 @@ def generate_launch_description():
     )
 
     # Global Costmap Server - publishes /global_costmap/costmap for RViz inflation aura
-    global_costmap = Node(
-        package='nav2_costmap_2d',
-        executable='nav2_costmap_2d',
-        name='global_costmap_server',
-        output='screen',
-        parameters=[configured_params],
-        remappings=[
-            ('tf', 'tf'),
-            ('tf_static', 'tf_static'),
-            ('voxel_grid', 'global_costmap/voxel_grid'),
+    # Must be in the 'global_costmap' namespace to match nav2_params.yaml structure
+    global_costmap = GroupAction(
+        actions=[
+            PushRosNamespace('global_costmap'),
+            Node(
+                package='nav2_costmap_2d',
+                executable='nav2_costmap_2d',
+                name='global_costmap',
+                output='screen',
+                parameters=[configured_params],
+                remappings=[
+                    ('tf', 'tf'),
+                    ('tf_static', 'tf_static'),
+                ]
+            ),
         ]
     )
 
     # Local Costmap Server - publishes /local_costmap/costmap for RViz
-    local_costmap = Node(
-        package='nav2_costmap_2d',
-        executable='nav2_costmap_2d',
-        name='local_costmap_server',
-        output='screen',
-        parameters=[configured_params],
-        remappings=[
-            ('tf', 'tf'),
-            ('tf_static', 'tf_static'),
-            ('voxel_grid', 'local_costmap/voxel_grid'),
+    # Must be in the 'local_costmap' namespace to match nav2_params.yaml structure
+    local_costmap = GroupAction(
+        actions=[
+            PushRosNamespace('local_costmap'),
+            Node(
+                package='nav2_costmap_2d',
+                executable='nav2_costmap_2d',
+                name='local_costmap',
+                output='screen',
+                parameters=[configured_params],
+                remappings=[
+                    ('tf', 'tf'),
+                    ('tf_static', 'tf_static'),
+                ]
+            ),
         ]
     )
 
