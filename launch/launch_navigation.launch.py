@@ -5,9 +5,6 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, Shutdown
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from launch_ros.descriptions import ParameterFile
-from nav2_common.launch import RewrittenYaml
 
 
 def _require_map(context):
@@ -21,9 +18,9 @@ def generate_launch_description():
     nav2_share = get_package_share_directory('nav2_bringup')
 
     use_sim_time = DeclareLaunchArgument(
-        'use_sim_time', default_value='true', description='Use simulation clock')
+        'use_sim_time', default_value='True', description='Use simulation clock')
     autostart = DeclareLaunchArgument(
-        'autostart', default_value='true', description='Automatically start Nav2')
+        'autostart', default_value='True', description='Automatically start Nav2')
     params_file = DeclareLaunchArgument(
         'params_file',
         default_value=os.path.join(package_share, 'config', 'nav2_params.yaml'),
@@ -75,29 +72,6 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time')}.items()
     )
 
-    # CMD_VEL Smoother Node
-    # Applies exponential moving average smoothing to DWB output
-    # to reduce oscillation and smooth steering transitions
-    # Subscribes to /cmd_vel (DWB raw)
-    # Publishes to /cmd_vel_smoothed (smoothed for Gazebo bridge)
-    cmd_vel_smoother = Node(
-        package='var_n7k_szakd',
-        executable='ros2_cmd_vel_smoother',
-        name='cmd_vel_smoother',
-        parameters=[{'smoothing_factor': 0.15}],
-    )
-
-    # CMD_VEL Visualizer Node
-    # Visualizes raw (RED) and smoothed (GREEN) commands in RViz
-    # Shows arrows for steering angle and velocity magnitude
-    # Subscribes to /cmd_vel (raw) and /cmd_vel_smoothed (smoothed)
-    # Publishes to /cmd_vel_markers (RViz MarkerArray)
-    cmd_vel_visualizer = Node(
-        package='var_n7k_szakd',
-        executable='cmd_vel_visualizer',
-        name='cmd_vel_visualizer',
-    )
-
     return LaunchDescription([
         use_sim_time,
         autostart,
@@ -109,7 +83,5 @@ def generate_launch_description():
         simulation,
         localization,
         navigation,
-        cmd_vel_smoother,
-        cmd_vel_visualizer,
         rviz,
     ])
