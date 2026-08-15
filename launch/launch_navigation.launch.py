@@ -49,6 +49,7 @@ def generate_launch_description():
             'use_sim_time': LaunchConfiguration('use_sim_time'),
             'params_file': LaunchConfiguration('params_file'),
             'autostart': LaunchConfiguration('autostart'),
+            'map': LaunchConfiguration('map'),
             'use_composition': 'False',
         }.items(),
     )
@@ -73,11 +74,7 @@ def generate_launch_description():
         launch_arguments={'use_sim_time': LaunchConfiguration('use_sim_time')}.items()
     )
 
-    # CMD_VEL Smoother Node
-    # Applies exponential moving average smoothing to DWB output
-    # to reduce oscillation and smooth steering transitions
-    # Subscribes to /cmd_vel (DWB raw)
-    # Publishes to /cmd_vel_smoothed (smoothed for Gazebo bridge)
+    # Smooth Nav2 commands before forwarding them to the Gazebo bridge.
     cmd_vel_smoother = Node(
         package='var_n7k_szakd',
         executable='ros2_cmd_vel_smoother',
@@ -85,11 +82,7 @@ def generate_launch_description():
         parameters=[{'smoothing_factor': 0.15}],
     )
 
-    # CMD_VEL Visualizer Node
-    # Visualizes raw (RED) and smoothed (GREEN) commands in RViz
-    # Shows arrows for steering angle and velocity magnitude
-    # Subscribes to /cmd_vel (raw) and /cmd_vel_smoothed (smoothed)
-    # Publishes to /cmd_vel_markers (RViz MarkerArray)
+    # Visualize raw and smoothed commands in RViz.
     cmd_vel_visualizer = Node(
         package='var_n7k_szakd',
         executable='cmd_vel_visualizer',

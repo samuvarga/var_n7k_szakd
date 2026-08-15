@@ -90,27 +90,27 @@ def generate_launch_description():
         name='roboworks_bridge',
         output='screen',
         arguments=[
-            '/clock@rosgraph_msgs/msg/Clock@gz.msgs.Clock',
-            '/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan',
-            '/model/roboworks/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry',
-            '/world/roboworks_world/model/roboworks/joint_state@sensor_msgs/msg/JointState@gz.msgs.Model',
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+            '/model/roboworks/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
+            '/world/roboworks_world/model/roboworks/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
         ],
         remappings=[
             ('/world/roboworks_world/model/roboworks/joint_state', 'joint_states'),
         ],
     )
 
-    # CRITICAL: Dedicated bridge for cmd_vel routing (smoother output → Ackermann input)
+    # Bridge ROS velocity commands to the Gazebo Ackermann input topic.
     cmd_vel_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
         name='cmd_vel_bridge',
         output='screen',
         arguments=[
-            '/model/roboworks/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist',
+            '/model/roboworks/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
         ],
         remappings=[
-            ('/model/roboworks/cmd_vel', '/cmd_vel_smoothed'),  # Listen to smoother output
+            ('/model/roboworks/cmd_vel', '/cmd_vel_smoothed'),
         ],
     )
 
@@ -176,7 +176,7 @@ def generate_launch_description():
         robot_state_publisher,
         spawn_robot,
         bridge,
-        cmd_vel_bridge,  # CRITICAL: Routes /cmd_vel_smoothed → /model/roboworks/cmd_vel
+        cmd_vel_bridge,
         odom_tf_broadcaster,
         base_footprint_tf,
         base_link_lidar_tf,

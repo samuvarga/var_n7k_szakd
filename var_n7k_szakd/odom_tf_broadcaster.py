@@ -63,8 +63,7 @@ class OdomTfBroadcaster(Node):
 
     def odom_callback(self, msg: Odometry) -> None:
         transform = _build_transform(msg, self.parent_frame, self.child_frame)
-        # ALWAYS use current simulation time to avoid timestamp extrapolation issues
-        transform.header.stamp = self.get_clock().now().to_msg()
+        transform.header.stamp = self._next_stamp()
         self.tf_broadcaster.sendTransform(transform)
 
 
