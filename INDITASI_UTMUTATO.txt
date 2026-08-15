@@ -227,6 +227,34 @@ Az odometry drift-et az AMCL gyorsabb frissitese elkeruli (update_min_d=0.01 m,
 update_min_a=0.01 rad). Ez azt jelenti, hogy az AMCL 100x gyakrabban korrigalja
 az odometria hibajat, nem csak nagy mozgasok utan.
 
+LEGLÉNYEGESEBB: Az AMCL-nek SZÜKSÉG VAN AZ INITIAL POSE BEÁLLÍTÁSRA az induláskor!
+Ezt az RViz-ben a 2D Pose Estimate eszközzel kell beállítani.
+
+
+8.0. RÖVID VERZIÓ (GYORS START)
+
+  1. pkill -9 -f 'gz|gazebo|ros'
+  2. Új terminal:
+     
+     cd /mnt/c/Users/samuv/ros2_ws
+     source /opt/ros/jazzy/setup.bash
+     colcon build --packages-select var_n7k_szakd --symlink-install
+     source install/setup.bash
+     
+     ros2 launch var_n7k_szakd launch_navigation.launch.py \
+       world_file:=roboworks_open_world.sdf \
+       map:=/home/$USER/roboworks_open_map.yaml
+
+  3. Az RViz-ben:
+     - Kattints a "2D Pose Estimate" gombra (felső toolbar)
+     - Jelöld meg a robot helyét a térképen
+     - Az AMCL azonnal elkezdő működni
+
+  4. Célt küld: Nav2 Goal
+
+
+8.1. RÉSZLETES LÉPÉSEK
+
 Eloszor allitsd le az OSSZES regi proceszt:
 
 pkill -9 -f 'gz sim|parameter_bridge|robot_state_publisher|odom_tf_broadcaster|static_transform_publisher|slam_toolbox|rviz2|amcl|lifecycle_manager|controller_server|planner_server|map_server|bt_navigator|collision_monitor' 2>/dev/null || true
@@ -254,6 +282,50 @@ ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks
 ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open_world.sdf map:=/home/$USER/roboworks_open_map.yaml
 
 A map:= argumentumot mindig add meg.
+
+
+8.2. INICIAL POSE BEÁLLÍTÁSA - KRITIKUS LÉPÉS!
+
+Ha az RViz-ben ilyen hibaüzeneteket látsz:
+
+  [planner_server] Invalid frame ID "map" passed to canTransform
+  [amcl] AMCL cannot publish a pose or update the transform
+
+Akkor az AMCL-nek nincs initial pose beállítva. Az AMCL csak akkor kezd el működni,
+amikor azt beállítod.
+
+LÉPÉSEK:
+
+1. Az RViz eszköztárában keress a "2D Pose Estimate" gombra
+   (általában egy robotikon, amelyen egy nyíl mutat)
+   
+2. Kattints rá
+   
+3. A térképen jelöld meg a robot valódi helyét:
+   - Kattints a térképre
+   - Húzd az egeret a robot iránya felé
+   - Engedd el az egérgombot
+
+4. Az AMCL azonnal elkezdő működni:
+   - A "map" frame megjelenik a TF tree-ben
+   - Az AMCL kezd publikálni a pose-t
+   - A global costmap elkezdő betöltődni
+
+5. Mostantól küld célt a Nav2 Goal-lal
+
+FONTOS: Ez az initial pose beállítás MINDEN indítás után szükséges!
+Az AMCL nem működik, amíg nem adod meg, hogy hol van a robot.
+
+
+8.3. INITIAL POSE ELLENŐRZÉSE
+
+Terminal 2 (másik ablak):
+
+  ros2 topic echo /amcl_pose --once
+
+Ha látod az üzenetet, az initial pose sikeresen beállított. Ha nem, az RViz-ben
+még nem állítottad be helyesen.
+
 
 Fontos: a navigation soran hasznalt map fajlnak ahhoz a vilaghoz kell
 tartoznia, amelyet a world_file argumentummal elinditottal. Ha az uj palyan
