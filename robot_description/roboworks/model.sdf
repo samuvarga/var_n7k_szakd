@@ -559,7 +559,7 @@
         <wheel_base>0.262</wheel_base>
         <wheel_separation>0.3187</wheel_separation>
         <wheel_radius>0.0625</wheel_radius>
-        <odom_publish_frequency>1</odom_publish_frequency>
+        <odom_publish_frequency>20</odom_publish_frequency>
         <topic>/model/roboworks/cmd_vel_smooth</topic>
         <min_velocity>-2</min_velocity>
         <max_velocity>2</max_velocity>
