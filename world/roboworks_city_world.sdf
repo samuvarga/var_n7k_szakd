@@ -1,0 +1,99 @@
+<?xml version='1.0'?>
+<sdf version='1.9'>
+  <world name='roboworks_world'>
+    <physics name='default_physics' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <plugin filename='gz-sim-physics-system' name='gz::sim::systems::Physics'/>
+    <plugin filename='gz-sim-user-commands-system' name='gz::sim::systems::UserCommands'/>
+    <plugin filename='gz-sim-sensors-system' name='gz::sim::systems::Sensors'/>
+    <plugin filename='gz-sim-scene-broadcaster-system' name='gz::sim::systems::SceneBroadcaster'/>
+
+    <light name='sun' type='directional'>
+      <pose>0 0 12 0 0 0</pose>
+      <cast_shadows>true</cast_shadows>
+      <diffuse>0.9 0.9 0.9 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -1</direction>
+    </light>
+
+    <model name='city_ground'>
+      <static>true</static>
+      <link name='ground_link'>
+        <collision name='ground_collision'>
+          <geometry><box><size>40 32 0.1</size></box></geometry>
+        </collision>
+        <visual name='ground_visual'>
+          <geometry><box><size>40 32 0.1</size></box></geometry>
+          <material>
+            <ambient>0.55 0.58 0.62 1</ambient>
+            <diffuse>0.55 0.58 0.62 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Perimeter walls leave a 36 x 28 m drivable city area. -->
+    <model name='city_wall_north'><static>true</static><pose>0 14 0.6 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>40 0.25 1.2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>40 0.25 1.2</size></box></geometry></visual>
+    </link></model>
+    <model name='city_wall_south'><static>true</static><pose>0 -14 0.6 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>40 0.25 1.2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>40 0.25 1.2</size></box></geometry></visual>
+    </link></model>
+    <model name='city_wall_east'><static>true</static><pose>19 0 0.6 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>0.25 28 1.2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>0.25 28 1.2</size></box></geometry></visual>
+    </link></model>
+    <model name='city_wall_west'><static>true</static><pose>-19 0 0.6 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>0.25 28 1.2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>0.25 28 1.2</size></box></geometry></visual>
+    </link></model>
+
+    <!-- Four east-west streets, each 2.4 m wide, with 3.6 m blocks between them. -->
+    <model name='city_block_row_1'><static>true</static><pose>0 11 0.7 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>36 1.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>36 1.0 1.4</size></box></geometry></visual>
+    </link></model>
+    <model name='city_block_row_2'><static>true</static><pose>0 4.5 0.7 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>36 1.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>36 1.0 1.4</size></box></geometry></visual>
+    </link></model>
+    <model name='city_block_row_3'><static>true</static><pose>0 -4.5 0.7 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>36 1.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>36 1.0 1.4</size></box></geometry></visual>
+    </link></model>
+    <model name='city_block_row_4'><static>true</static><pose>0 -11 0.7 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>36 1.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>36 1.0 1.4</size></box></geometry></visual>
+    </link></model>
+
+    <!-- North-south streets are broken at alternating rows to create T and four-way junctions. -->
+    <model name='city_block_col_west'><static>true</static><pose>-12 0 0.7 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></visual>
+    </link></model>
+    <model name='city_block_col_center'><static>true</static><pose>0 0 0.7 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></visual>
+    </link></model>
+    <model name='city_block_col_east'><static>true</static><pose>12 0 0.7 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></visual>
+    </link></model>
+
+    <!-- Offset streets create additional bends without narrowing the turning space. -->
+    <model name='city_diagonal_north'><static>true</static><pose>6 8 0.7 0 0 0.18</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>11 1.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>11 1.0 1.4</size></box></geometry></visual>
+    </link></model>
+    <model name='city_diagonal_south'><static>true</static><pose>-6 -8 0.7 0 0 -0.18</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>11 1.0 1.4</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>11 1.0 1.4</size></box></geometry></visual>
+    </link></model>
+  </world>
+</sdf>

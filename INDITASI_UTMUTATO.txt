@@ -53,6 +53,10 @@ Ha csak a robotot es az uj, nyitottabb palyat szeretned kiprobalni:
 
 ros2 launch var_n7k_szakd roboworks_sim.launch.py world_file:=roboworks_open_world.sdf
 
+Ha a harmadik, varosi uthalozatos palyat szeretned kiprobalni:
+
+ros2 launch var_n7k_szakd roboworks_sim.launch.py world_file:=roboworks_city_world.sdf
+
 Ez elinditja:
 - a Gazebo Sim szimulaciot,
 - a Wheeltec roboworks robotot,
@@ -82,9 +86,22 @@ Az uj, nagyobb es nyitottabb palya inditasa:
 
 ros2 launch var_n7k_szakd launch_slam_mapping.launch.py world_file:=roboworks_open_world.sdf
 
+A harmadik, varosi uthalozatos palya terkepesenek inditasa:
+
+ros2 launch var_n7k_szakd launch_slam_mapping.launch.py world_file:=roboworks_city_world.sdf
+
 Az uj palya fajlja:
 
 world/roboworks_open_world.sdf
+
+A harmadik palya fajlja:
+
+world/roboworks_city_world.sdf
+
+A varosi palya az open worldhoz hasonlo meretu. Negy fo utca, tobb
+keresztezodes, T-elagazas es eltolva kialakitott kanyargos utcaszakasz
+talalhato benne. Az utak kb. 2.4 m szelesek, ezert a robotnak marad helye
+a befordulashoz es a lidaros akadalyfelismereshez.
 
 Az uj palyan nagyobb szabad terulet es kevesebb belso fal van. A regi palya
 nem torlodott, az tovabbra is az elozo parancs alapertelmezett palyaja.
@@ -281,6 +298,10 @@ ros2 launch var_n7k_szakd launch_navigation.launch.py map:=/home/$USER/roboworks
 
 ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open_world.sdf map:=/home/$USER/roboworks_open_map.yaml
 
+# Navigacio a harmadik, varosi uthalozatos palyan:
+
+ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_city_world.sdf map:=/home/$USER/roboworks_city_map.yaml
+
 A map:= argumentumot mindig add meg.
 
 
@@ -336,6 +357,10 @@ ros2 run nav2_map_server map_saver_cli -f /home/$USER/roboworks_open_map
 Ezutan az uj palya navigacioja:
 
 ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open_world.sdf map:=/home/$USER/roboworks_open_map.yaml
+
+A harmadik, varosi palya navigacioja:
+
+ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_city_world.sdf map:=/home/$USER/roboworks_city_map.yaml
 
 A navigacio a mentett terkepet, az AMCL lokalizaciot es a Nav2 stack-et
 hasznalja.
