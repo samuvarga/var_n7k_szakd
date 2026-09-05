@@ -35,7 +35,7 @@ class CmdVelSmoother(Node):
         
         self.publisher = self.create_publisher(
             Twist, 
-            '/cmd_vel_smoothed',  # Smoothed output for Gazebo bridge
+            '/model/roboworks/cmd_vel',  # Smoothed output for Gazebo bridge
             qos_profile=rclpy.qos.QoSProfile(depth=1)
         )
         
@@ -52,7 +52,7 @@ class CmdVelSmoother(Node):
         )
         self.get_logger().info(
             f"  Subscribing to: '/cmd_vel' (DWB raw)\n"
-            f"  Publishing to: '/cmd_vel_smoothed' (smoothed for bridge)\n"
+            f"  Publishing to: '/model/roboworks/cmd_vel' (smoothed for bridge)\n"
             f"  Formula: smoothed = {self.smoothing_factor} * prev + {1.0-self.smoothing_factor} * current"
         )
     

@@ -31,7 +31,7 @@ class CmdVelVisualizer(Node):
         
         self.sub_smooth = self.create_subscription(
             Twist,
-            '/cmd_vel_smoothed',  # Smoothed output (GREEN)
+                '/model/roboworks/cmd_vel',  # Smoothed output (GREEN)
             self.callback_smooth,
             qos_profile=rclpy.qos.QoSProfile(depth=1)
         )
