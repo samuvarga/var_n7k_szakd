@@ -11,6 +11,7 @@ Based on Simple Pursuit smoothing principle:
 Default alpha = 0.5 (50% weight to previous)
 """
 
+import math
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
@@ -73,7 +74,6 @@ class CmdVelSmoother(Node):
         self.smooth_linear_y = k * self.smooth_linear_y + (1.0 - k) * msg.linear.y
         self.smooth_linear_z = k * self.smooth_linear_z + (1.0 - k) * msg.linear.z
         
-        # Apply smoothing to angular velocities
         self.smooth_angular_x = k * self.smooth_angular_x + (1.0 - k) * msg.angular.x
         self.smooth_angular_y = k * self.smooth_angular_y + (1.0 - k) * msg.angular.y
         self.smooth_angular_z = k * self.smooth_angular_z + (1.0 - k) * msg.angular.z

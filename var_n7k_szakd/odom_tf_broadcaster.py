@@ -1,5 +1,3 @@
-from typing import Optional
-
 import rclpy
 from builtin_interfaces.msg import Time
 from geometry_msgs.msg import TransformStamped
@@ -12,15 +10,6 @@ def _stamp_from_msg(msg: Odometry) -> Time:
     if msg.header.stamp.sec != 0 or msg.header.stamp.nanosec != 0:
         return msg.header.stamp
     return Time(sec=0, nanosec=0)
-
-
-def _ensure_monotonic_stamp(stamp: Time, last_stamp: Optional[Time]) -> Time:
-    if last_stamp is None:
-        return stamp
-
-    if (stamp.sec, stamp.nanosec) < (last_stamp.sec, last_stamp.nanosec):
-        return Time(sec=last_stamp.sec, nanosec=last_stamp.nanosec)
-    return stamp
 
 
 def _build_transform(msg: Odometry, parent_frame: str, child_frame: str) -> TransformStamped:
@@ -53,17 +42,9 @@ class OdomTfBroadcaster(Node):
             self.odom_callback,
             10,
         )
-        self._last_publish_time: Optional[Time] = None
-
-    def _next_stamp(self) -> Time:
-        stamp = self.get_clock().now().to_msg()
-        stamp = _ensure_monotonic_stamp(stamp, self._last_publish_time)
-        self._last_publish_time = stamp
-        return stamp
 
     def odom_callback(self, msg: Odometry) -> None:
         transform = _build_transform(msg, self.parent_frame, self.child_frame)
-        transform.header.stamp = self._next_stamp()
         self.tf_broadcaster.sendTransform(transform)
 
 

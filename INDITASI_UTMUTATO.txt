@@ -667,10 +667,13 @@ amelyeket az Ackermann kinematika korlátozásai alapján optimalizáltunk.
 14.1. KRITIKUS PARAMETEREK (config/nav2_params.yaml)
 
 AMCL Lokalizáció:
-  update_min_d: 0.05 m         (lidar-szinkronizált, nem 0.01 m)
-  update_min_a: 0.05 rad       (lidar-szinkronizált, nem 0.01 rad)
-  min_particles: 500
-  max_particles: 2000
+  update_min_d: 0.05 m
+  update_min_a: 0.05 rad
+  min_particles: 800
+  max_particles: 3000
+  pf_z_hit: 0.85
+  laser_sigma_hit: 0.15
+  odom_alpha1-2: 0.08, odom_alpha3-4: 0.12
 
 DWB Fordulási Kontroller:
   max_vel_theta: 1.8 rad/s     (a robot tipikus fordulási sebessége)
