@@ -73,8 +73,8 @@
       <visual name='visual'><geometry><box><size>6 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
     <model name='building_mid_center'><static>true</static><pose>-3 1.5 1.0 0 0 0</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>6 5 2</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>6 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
+      <collision name='collision'><geometry><box><size>4 4 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>4 4 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
     <model name='building_mid_east'><static>true</static><pose>12 1.5 1.0 0 0 0</pose><link name='link'>
       <collision name='collision'><geometry><box><size>6 7 2</size></box></geometry></collision>
