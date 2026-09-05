@@ -54,46 +54,44 @@
       <visual name='visual'><geometry><box><size>0.25 28 1.2</size></box></geometry></visual>
     </link></model>
 
-    <!-- Four east-west streets, each 2.4 m wide, with 3.6 m blocks between them. -->
-    <model name='city_block_row_1'><static>true</static><pose>0 11 0.7 0 0 0</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>36 1.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>36 1.0 1.4</size></box></geometry></visual>
+    <!-- Separate dark building blocks leave broad, connected road corridors between them. -->
+    <model name='building_north_west'><static>true</static><pose>-12 9 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>9 5 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>9 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
-    <model name='city_block_row_2'><static>true</static><pose>0 4.5 0.7 0 0 0</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>36 1.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>36 1.0 1.4</size></box></geometry></visual>
+    <model name='building_north_center'><static>true</static><pose>0 10 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>5 6 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>5 6 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
-    <model name='city_block_row_3'><static>true</static><pose>0 -4.5 0.7 0 0 0</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>36 1.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>36 1.0 1.4</size></box></geometry></visual>
-    </link></model>
-    <model name='city_block_row_4'><static>true</static><pose>0 -11 0.7 0 0 0</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>36 1.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>36 1.0 1.4</size></box></geometry></visual>
+    <model name='building_north_east'><static>true</static><pose>12 9 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>5 5 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>5 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
 
-    <!-- North-south streets are broken at alternating rows to create T and four-way junctions. -->
-    <model name='city_block_col_west'><static>true</static><pose>-12 0 0.7 0 0 0</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></visual>
+    <model name='building_mid_west'><static>true</static><pose>-13 1.5 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>6 5 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>6 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
-    <model name='city_block_col_center'><static>true</static><pose>0 0 0.7 0 0 0</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></visual>
+    <model name='building_mid_center'><static>true</static><pose>-3 1.5 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>6 5 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>6 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
-    <model name='city_block_col_east'><static>true</static><pose>12 0 0.7 0 0 0</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>1.0 8.0 1.4</size></box></geometry></visual>
+    <model name='building_mid_east'><static>true</static><pose>12 1.5 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>6 7 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>6 7 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
 
-    <!-- Offset streets create additional bends without narrowing the turning space. -->
-    <model name='city_diagonal_north'><static>true</static><pose>6 8 0.7 0 0 0.18</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>11 1.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>11 1.0 1.4</size></box></geometry></visual>
+    <model name='building_south_west'><static>true</static><pose>-11 -8 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>7 5 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>7 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
-    <model name='city_diagonal_south'><static>true</static><pose>-6 -8 0.7 0 0 -0.18</pose><link name='link'>
-      <collision name='collision'><geometry><box><size>11 1.0 1.4</size></box></geometry></collision>
-      <visual name='visual'><geometry><box><size>11 1.0 1.4</size></box></geometry></visual>
+    <model name='building_south_center'><static>true</static><pose>1 -8 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>10 5 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>10 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
+    </link></model>
+    <model name='building_south_east'><static>true</static><pose>13 -8 1.0 0 0 0</pose><link name='link'>
+      <collision name='collision'><geometry><box><size>6 5 2</size></box></geometry></collision>
+      <visual name='visual'><geometry><box><size>6 5 2</size></box></geometry><material><ambient>0.03 0.03 0.03 1</ambient><diffuse>0.03 0.03 0.03 1</diffuse></material></visual>
     </link></model>
   </world>
 </sdf>
