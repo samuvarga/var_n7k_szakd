@@ -109,9 +109,6 @@ def generate_launch_description():
         arguments=[
             '/model/roboworks/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
         ],
-        remappings=[
-            ('/model/roboworks/cmd_vel', '/cmd_vel_smoothed'),
-        ],
     )
 
     odom_tf_broadcaster = Node(

@@ -19,6 +19,12 @@ def generate_launch_description():
         description='Gazebo world name used by the robot spawn launch',
     )
 
+    declare_world_file_cmd = DeclareLaunchArgument(
+        'world_file',
+        default_value='roboworks_world.sdf',
+        description='World SDF filename installed in the package world directory',
+    )
+
     declare_use_sim_time_cmd = DeclareLaunchArgument(
         'use_sim_time',
         default_value='True',
@@ -43,6 +49,7 @@ def generate_launch_description():
         ),
         launch_arguments={
             'world_name': LaunchConfiguration('world_name'),
+            'world_file': LaunchConfiguration('world_file'),
         }.items(),
     )
 
@@ -68,6 +75,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_world_name_cmd,
+        declare_world_file_cmd,
         declare_use_sim_time_cmd,
         declare_autostart_cmd,
         declare_params_file_cmd,
