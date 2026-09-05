@@ -207,6 +207,10 @@ ros2 run nav2_map_server map_saver_cli -f /home/$USER/roboworks_map
 ros2 run nav2_map_server map_saver_cli \
   -f /home/$USER/roboworks_open_map
 
+
+ros2 run nav2_map_server map_saver_cli \
+  -f /home/$USER/roboworks_city_map
+
 Ezeknek a fajloknak kell letrejonniuk:
 
 /home/$USER/roboworks_map.yaml
@@ -361,6 +365,20 @@ ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open
 A harmadik, varosi palya navigacioja:
 
 ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_city_world.sdf map:=/home/$USER/roboworks_city_map.yaml
+
+Ha az RViz-ben meg mindig a korabbi terkep latszik, ellenorizd, hogy a
+map_server tenyleg a varosi YAML fajlt toltotte-e be:
+
+ros2 param get /map_server yaml_filename
+
+A helyes eredmeny:
+
+String value is: /home/$USER/roboworks_city_map.yaml
+
+Ha masik YAML fajl jelenik meg, allitsd le az osszes regi ROS/Gazebo proceszt,
+majd inditsd ujra a fenti navigacios parancsot. Ha a varosi YAML jelenik meg,
+akkor az RViz-ben a /map topicra feliratkozott Map display-t hasznald, es ne
+egy korabbi mentett kepet vagy masik Map display-t.
 
 A navigacio a mentett terkepet, az AMCL lokalizaciot es a Nav2 stack-et
 hasznalja.

@@ -165,7 +165,6 @@ planner_server:
 map_server:
   ros__parameters:
     use_sim_time: true
-    yaml_filename: /home/samuv/roboworks_map.yaml
 
 collision_monitor:
   ros__parameters:
