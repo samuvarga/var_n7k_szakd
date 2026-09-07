@@ -1260,3 +1260,54 @@ Ha az odom 20 Hz túl lassúnak vagy gyorsnak érzi:
   - Valós robot: 10 Hz
   - Gazebo szimuláció: 20 Hz
   - Gyors szimulációs teszt: 30+ Hz
+
+
+18. IMU ES EKF LOKALIZACIO
+===========================
+
+Az Ackermann kanyarodasi drift csokkentesehez a navigacios launch most ezt a
+lokalizacios lancot hasznalja:
+
+  Gazebo Ackermann odometria -> /odom
+  Gazebo IMU -> /mobile_base/sensors/imu_data
+  robot_localization EKF -> /odometry/filtered es odom -> base_link TF
+  AMCL -> map -> odom TF
+
+A /odom topic mar normalizalt frame-nevekkel erkezik:
+
+  frame_id: odom
+  child_frame_id: base_link
+
+A nyers odometria TF-et az odom_tf_broadcaster navigacio kozben nem publiklja,
+mert azt az EKF birtokolja. Ha csak a roboworks_sim.launch.py fut, a nyers TF
+alapertelmezes szerint tovabbra is publikalt.
+
+Az IMU-hoz szukseges valtozasok:
+
+  - a robot SDF tartalmazza a helyes IMU sensor-shemat,
+  - a world fajlok betoltik a gz-sim-imu-system plugint,
+  - a ROS bridge a sensor_msgs/msg/Imu uzenetet publiklja,
+  - a fizikai IMU frame a base_link-hez 0.25, 0, 0.094 meter eltolassal kapcsolodik.
+
+Az EKF konfiguracio itt talalhato:
+
+  config/ekf.yaml
+
+Az AMCL motion model szandekosan maradt:
+
+  robot_model_type: "nav2_amcl::DifferentialMotionModel"
+
+Kontrollalt fordulasi meres:
+
+  - nyers odometria: kb. 6.7 fok yaw-hiba es kb. 9 cm poziciohiba,
+  - IMU + EKF: kb. 0.84 fok yaw-hiba es kb. 8.6 cm poziciohiba.
+
+Az EKF bevezetese utan is szukseges az initial pose beallitasa az RViz-ben.
+Ha a planner az indulas pillanataban inactive allapotba kerul, eloszor add meg
+az initial pose-t, majd ellenorizd:
+
+  ros2 lifecycle get /planner_server
+
+Szukseg eseten a planner ujraaktivlasa:
+
+  ros2 lifecycle set /planner_server activate

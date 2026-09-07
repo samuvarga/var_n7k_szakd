@@ -39,7 +39,19 @@ def generate_launch_description():
         launch_arguments={
             'world_name': LaunchConfiguration('world_name'),
             'world_file': LaunchConfiguration('world_file'),
+            'publish_odom_tf': 'False',
         }.items(),
+    )
+
+    ekf = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[
+            os.path.join(package_share, 'config', 'ekf.yaml'),
+            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+        ],
     )
 
     navigation = IncludeLaunchDescription(
@@ -98,6 +110,7 @@ def generate_launch_description():
         world_file,
         OpaqueFunction(function=_require_map),
         simulation,
+        ekf,
         localization,
         navigation,
         cmd_vel_smoother,

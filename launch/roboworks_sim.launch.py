@@ -1,4 +1,5 @@
 import os
+import xml.etree.ElementTree as ET
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -7,6 +8,19 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+
+
+def _robot_description(robot_urdf, robot_sdf):
+    if not os.path.exists(robot_urdf):
+        return open(robot_sdf, 'r', encoding='utf-8').read()
+
+    root = ET.parse(robot_urdf).getroot()
+    for joint_name in ('imu_joint', 'lidar_joint'):
+        joint = root.find(f"./joint[@name='{joint_name}']")
+        if joint is None or joint.find('origin') is not None:
+            continue
+        ET.SubElement(joint, 'origin', {'xyz': '0.25 0 0.094', 'rpy': '0 0 0'})
+    return ET.tostring(root, encoding='unicode')
 
 
 def generate_launch_description():
@@ -45,6 +59,11 @@ def generate_launch_description():
     declare_roll_cmd = DeclareLaunchArgument('R', default_value='0.0')
     declare_pitch_cmd = DeclareLaunchArgument('P', default_value='0.0')
     declare_yaw_cmd = DeclareLaunchArgument('Y', default_value='0.0')
+    declare_publish_odom_tf_cmd = DeclareLaunchArgument(
+        'publish_odom_tf',
+        default_value='True',
+        description='Publish raw odometry TF when no filter owns odom -> base_link',
+    )
 
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -63,7 +82,7 @@ def generate_launch_description():
         output='screen',
         parameters=[
             {'use_sim_time': True},
-            {'robot_description': open(robot_urdf, 'r', encoding='utf-8').read() if os.path.exists(robot_urdf) else open(robot_sdf, 'r', encoding='utf-8').read()},
+            {'robot_description': _robot_description(robot_urdf, robot_sdf)},
         ],
     )
 
@@ -74,7 +93,6 @@ def generate_launch_description():
         parameters=[{
             'world': LaunchConfiguration('world_name'),
             'file': robot_sdf,
-            'name': LaunchConfiguration('robot_name'),
             'x': LaunchConfiguration('x'),
             'y': LaunchConfiguration('y'),
             'z': LaunchConfiguration('z'),
@@ -92,6 +110,7 @@ def generate_launch_description():
         arguments=[
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
             '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+            '/mobile_base/sensors/imu_data@sensor_msgs/msg/Imu[gz.msgs.IMU',
             '/model/roboworks/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
             '/world/roboworks_world/model/roboworks/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
         ],
@@ -119,29 +138,21 @@ def generate_launch_description():
         parameters=[
             {'use_sim_time': True},
             {'odom_topic': '/model/roboworks/odometry'},
+            {'output_odom_topic': '/odom'},
             {'parent_frame': 'odom'},
-            {'child_frame': 'base_footprint'},
+            {'child_frame': 'base_link'},
+            {'publish_tf': LaunchConfiguration('publish_odom_tf')},
         ],
     )
 
-    base_footprint_tf = Node(
+    imu_sensor_tf = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        name='base_footprint_tf',
-        output='screen',
-        arguments=['0', '0', '0', '0', '0', '0', 'base_footprint', 'base_link'],
-        parameters=[{'use_sim_time': True}],
-    )
-
-    base_link_lidar_tf = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='base_link_lidar_tf',
+        name='imu_sensor_tf',
         output='screen',
         arguments=[
             '0.25', '0', '0.094', '0', '0', '0',
-            'base_link',
-            'lidar_link',
+            'base_link', 'roboworks/imu_link/imu_sensor',
         ],
         parameters=[{'use_sim_time': True}],
     )
@@ -169,13 +180,13 @@ def generate_launch_description():
         declare_roll_cmd,
         declare_pitch_cmd,
         declare_yaw_cmd,
+        declare_publish_odom_tf_cmd,
         gz_sim,
         robot_state_publisher,
         spawn_robot,
         bridge,
         cmd_vel_bridge,
         odom_tf_broadcaster,
-        base_footprint_tf,
-        base_link_lidar_tf,
+        imu_sensor_tf,
         lidar_sensor_tf,
     ])
