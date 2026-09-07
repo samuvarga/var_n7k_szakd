@@ -41,6 +41,7 @@ setup(
             'odom_tf_broadcaster = var_n7k_szakd.odom_tf_broadcaster:main',
             'ros2_cmd_vel_smoother = scripts.ros2_cmd_vel_smoother:main',
             'cmd_vel_visualizer = scripts.cmd_vel_visualizer:main',
+            'local_costmap_boundary_visualizer = scripts.local_costmap_boundary_visualizer:main',
         ],
     },
 )

@@ -101,6 +101,18 @@ def generate_launch_description():
         name='cmd_vel_visualizer',
     )
 
+    local_costmap_boundary_visualizer = Node(
+        package='var_n7k_szakd',
+        executable='local_costmap_boundary_visualizer',
+        name='local_costmap_boundary_visualizer',
+        parameters=[{
+            'width': 6.0,
+            'height': 6.0,
+            'frame_id': 'odom',
+            'odom_topic': '/odometry/filtered',
+        }],
+    )
+
     return LaunchDescription([
         use_sim_time,
         autostart,
@@ -115,5 +127,6 @@ def generate_launch_description():
         navigation,
         cmd_vel_smoother,
         cmd_vel_visualizer,
+        local_costmap_boundary_visualizer,
         rviz,
     ])
