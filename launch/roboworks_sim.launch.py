@@ -112,10 +112,11 @@ def generate_launch_description():
             '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
             '/mobile_base/sensors/imu_data@sensor_msgs/msg/Imu[gz.msgs.IMU',
             '/model/roboworks/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry',
-            '/world/roboworks_world/model/roboworks/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
+            '/world/roboworks_world/dynamic_pose/info@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+            '/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
         ],
         remappings=[
-            ('/world/roboworks_world/model/roboworks/joint_state', 'joint_states'),
+            ('/joint_state', 'joint_states'),
         ],
     )
 
