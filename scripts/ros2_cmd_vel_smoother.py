@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-DWB Command Velocity Smoother Node
-===================================
-Applies exponential moving average smoothing to DWB output cmd_vel commands.
+Command Velocity Smoother Node
+==============================
+Applies exponential moving average smoothing to Nav2 output cmd_vel commands.
 This reduces oscillation and provides smooth steering transitions.
 
 Based on Simple Pursuit smoothing principle:
@@ -67,6 +67,25 @@ class CmdVelSmoother(Node):
         With alpha=0.5:
           smoothed(t) = 0.5 * smoothed(t-1) + 0.5 * current(t)
         """
+        # A stop command must pass through immediately. Otherwise EMA leaves a
+        # residual velocity after Nav2 reports that the goal is complete.
+        if (
+            abs(msg.linear.x) < 1e-3
+            and abs(msg.linear.y) < 1e-3
+            and abs(msg.linear.z) < 1e-3
+            and abs(msg.angular.x) < 1e-3
+            and abs(msg.angular.y) < 1e-3
+            and abs(msg.angular.z) < 1e-3
+        ):
+            self.smooth_linear_x = 0.0
+            self.smooth_linear_y = 0.0
+            self.smooth_linear_z = 0.0
+            self.smooth_angular_x = 0.0
+            self.smooth_angular_y = 0.0
+            self.smooth_angular_z = 0.0
+            self.publisher.publish(Twist())
+            return
+
         k = self.smoothing_factor
         
         # Apply smoothing to linear velocities
