@@ -57,6 +57,10 @@ Ha a harmadik, varosi uthalozatos palyat szeretned kiprobalni:
 
 ros2 launch var_n7k_szakd roboworks_sim.launch.py world_file:=roboworks_city_world.sdf
 
+Ha a kozepso induloteru, egy kijaratos labirintust szeretned kiprobalni:
+
+ros2 launch var_n7k_szakd roboworks_sim.launch.py world_file:=roboworks_maze_world.sdf
+
 Ez elinditja:
 - a Gazebo Sim szimulaciot,
 - a Wheeltec roboworks robotot,
@@ -90,6 +94,10 @@ A harmadik, varosi uthalozatos palya terkepesenek inditasa:
 
 ros2 launch var_n7k_szakd launch_slam_mapping.launch.py world_file:=roboworks_city_world.sdf
 
+A kozeprol induló, egyetlen kijarattal rendelkezo labirintus terkepesenek inditasa:
+
+ros2 launch var_n7k_szakd launch_slam_mapping.launch.py world_file:=roboworks_maze_world.sdf
+
 Az uj palya fajlja:
 
 world/roboworks_open_world.sdf
@@ -98,10 +106,20 @@ A harmadik palya fajlja:
 
 world/roboworks_city_world.sdf
 
+A labirintus palya fajlja:
+
+world/roboworks_maze_world.sdf
+
 A varosi palya az open worldhoz hasonlo meretu. Negy fo utca, tobb
 keresztezodes, T-elagazas es eltolva kialakitott kanyargos utcaszakasz
 talalhato benne. Az utak kb. 2.4 m szelesek, ezert a robotnak marad helye
 a befordulashoz es a lidaros akadalyfelismereshez.
+
+A labirintus palya egy 9 x 9 cellas, kozepen nyitott induloterrel kialakitott
+negyzetes palya. A falak kozott 1.6 m szabad sav marad, tehat a falak
+kozepvonala kozotti raszter 1.8 m, a falvastagsag pedig 0.2 m. A kulso
+falon pontosan egy, a deli oldal kozepen levo kijarat van. A robot alapbol
+a palya kozepen, a nyitott induloterben spawnol.
 
 Az uj palyan nagyobb szabad terulet es kevesebb belso fal van. A regi palya
 nem torlodott, az tovabbra is az elozo parancs alapertelmezett palyaja.
@@ -211,6 +229,9 @@ ros2 run nav2_map_server map_saver_cli \
 ros2 run nav2_map_server map_saver_cli \
   -f /home/$USER/roboworks_city_map
 
+ros2 run nav2_map_server map_saver_cli \
+  -f /home/$USER/roboworks_maze_map
+
 Ezeknek a fajloknak kell letrejonniuk:
 
 /home/$USER/roboworks_map.yaml
@@ -266,6 +287,11 @@ Ezt az RViz-ben a 2D Pose Estimate eszközzel kell beállítani.
        world_file:=roboworks_open_world.sdf \
        map:=/home/$USER/roboworks_open_map.yaml
 
+     # Kozepso induloteru labirintus, egy deli kijarattal:
+     ros2 launch var_n7k_szakd launch_navigation.launch.py \
+       world_file:=roboworks_maze_world.sdf \
+       map:=/home/$USER/roboworks_maze_map.yaml
+
   3. Az RViz-ben:
      - Kattints a "2D Pose Estimate" gombra (felső toolbar)
      - Jelöld meg a robot helyét a térképen
@@ -305,6 +331,10 @@ ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open
 # Navigacio a harmadik, varosi uthalozatos palyan:
 
 ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_city_world.sdf map:=/home/$USER/roboworks_city_map.yaml
+
+# Navigacio a kozeprol induló labirintuspalyan:
+
+ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_maze_world.sdf map:=/home/$USER/roboworks_maze_map.yaml
 
 A map:= argumentumot mindig add meg.
 
@@ -365,6 +395,10 @@ ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_open
 A harmadik, varosi palya navigacioja:
 
 ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_city_world.sdf map:=/home/$USER/roboworks_city_map.yaml
+
+A labirintus palya navigacioja:
+
+ros2 launch var_n7k_szakd launch_navigation.launch.py world_file:=roboworks_maze_world.sdf map:=/home/$USER/roboworks_maze_map.yaml
 
 Ha az RViz-ben meg mindig a korabbi terkep latszik, ellenorizd, hogy a
 map_server tenyleg a varosi YAML fajlt toltotte-e be:

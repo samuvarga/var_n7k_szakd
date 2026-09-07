@@ -80,6 +80,12 @@ def generate_launch_description():
         }.items(),
     )
 
+    slam_map_pointcloud_visualizer = Node(
+        package='var_n7k_szakd',
+        executable='slam_map_pointcloud_visualizer',
+        name='slam_map_pointcloud_visualizer',
+    )
+
     rviz = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(package_share, 'launch', 'launch_rviz.launch.py')),
@@ -125,6 +131,7 @@ def generate_launch_description():
         ekf,
         localization,
         navigation,
+        slam_map_pointcloud_visualizer,
         cmd_vel_smoother,
         cmd_vel_visualizer,
         local_costmap_boundary_visualizer,

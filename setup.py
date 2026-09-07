@@ -42,6 +42,7 @@ setup(
             'ros2_cmd_vel_smoother = scripts.ros2_cmd_vel_smoother:main',
             'cmd_vel_visualizer = scripts.cmd_vel_visualizer:main',
             'local_costmap_boundary_visualizer = scripts.local_costmap_boundary_visualizer:main',
+            'slam_map_pointcloud_visualizer = scripts.slam_map_image_visualizer:main',
         ],
     },
 )

@@ -6,6 +6,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
 
 
 def generate_launch_description():
@@ -64,6 +65,12 @@ def generate_launch_description():
         }.items(),
     )
 
+    slam_map_pointcloud_visualizer = Node(
+        package='var_n7k_szakd',
+        executable='slam_map_pointcloud_visualizer',
+        name='slam_map_pointcloud_visualizer',
+    )
+
     rviz = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_share, 'launch', 'launch_rviz.launch.py')
@@ -81,5 +88,6 @@ def generate_launch_description():
         declare_params_file_cmd,
         roboworks_sim,
         slam,
+        slam_map_pointcloud_visualizer,
         rviz,
     ])

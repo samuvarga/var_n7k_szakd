@@ -1,0 +1,242 @@
+<?xml version='1.0'?>
+<sdf version='1.9'>
+  <!-- 9 x 9 cell maze. Cell pitch: 1.8 m, wall thickness: 0.2 m, clear width: 1.6 m. -->
+  <world name='roboworks_world'>
+    <physics name='default_physics' type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <plugin filename='gz-sim-physics-system' name='gz::sim::systems::Physics'/>
+    <plugin filename='gz-sim-user-commands-system' name='gz::sim::systems::UserCommands'/>
+    <plugin filename='gz-sim-sensors-system' name='gz::sim::systems::Sensors'/>
+    <plugin filename='gz-sim-imu-system' name='gz::sim::systems::Imu'/>
+    <plugin filename='gz-sim-scene-broadcaster-system' name='gz::sim::systems::SceneBroadcaster'/>
+
+    <light name='sun' type='directional'>
+      <pose>0 0 12 0 0 0</pose>
+      <cast_shadows>true</cast_shadows>
+      <diffuse>0.9 0.9 0.9 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -1</direction>
+    </light>
+
+    <model name='maze_ground'>
+      <static>true</static>
+      <link name='ground_link'>
+        <collision name='ground_collision'><geometry><box><size>22 22 0.1</size></box></geometry></collision>
+        <visual name='ground_visual'>
+          <geometry><box><size>22 22 0.1</size></box></geometry>
+          <material><ambient>0.72 0.72 0.72 1</ambient><diffuse>0.72 0.72 0.72 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name='maze_walls'>
+      <static>true</static>
+      <link name='walls'>
+        <collision name='wall_0_collision'><pose>-6.3 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_1_collision'><pose>-6.3 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_2_collision'><pose>-6.3 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_3_collision'><pose>-4.5 -7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_4_collision'><pose>-4.5 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_5_collision'><pose>-4.5 7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_6_collision'><pose>-2.7 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_7_collision'><pose>-2.7 -3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_8_collision'><pose>-2.7 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_9_collision'><pose>-2.7 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_10_collision'><pose>-0.9 -7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_11_collision'><pose>-0.9 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_12_collision'><pose>0.9 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_13_collision'><pose>0.9 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_14_collision'><pose>0.9 7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_15_collision'><pose>2.7 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_16_collision'><pose>2.7 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_17_collision'><pose>2.7 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_18_collision'><pose>4.5 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_19_collision'><pose>4.5 -3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_20_collision'><pose>4.5 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_21_collision'><pose>4.5 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_22_collision'><pose>4.5 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_23_collision'><pose>6.3 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_24_collision'><pose>6.3 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_25_collision'><pose>6.3 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_26_collision'><pose>6.3 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_27_collision'><pose>6.3 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_28_collision'><pose>6.3 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_29_collision'><pose>-7.2 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_30_collision'><pose>-7.2 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_31_collision'><pose>-5.4 -6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_32_collision'><pose>-5.4 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_33_collision'><pose>-5.4 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_34_collision'><pose>-5.4 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_35_collision'><pose>-5.4 4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_36_collision'><pose>-3.6 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_37_collision'><pose>-3.6 -0.9 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_38_collision'><pose>-3.6 0.9 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_39_collision'><pose>-3.6 4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_40_collision'><pose>-3.6 6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_41_collision'><pose>-1.8 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_42_collision'><pose>-1.8 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_43_collision'><pose>-1.8 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_44_collision'><pose>-1.8 4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_45_collision'><pose>0.0 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_46_collision'><pose>0.0 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_47_collision'><pose>0.0 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_48_collision'><pose>1.8 -6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_49_collision'><pose>1.8 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_50_collision'><pose>1.8 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_51_collision'><pose>1.8 6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_52_collision'><pose>3.6 -6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_53_collision'><pose>3.6 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_54_collision'><pose>3.6 0.9 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_55_collision'><pose>3.6 6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_56_collision'><pose>5.4 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_57_collision'><pose>5.4 0.9 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_58_collision'><pose>7.2 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_59_collision'><pose>-7.2 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_60_collision'><pose>-7.2 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_61_collision'><pose>-5.4 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_62_collision'><pose>-5.4 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_63_collision'><pose>-3.6 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_64_collision'><pose>-3.6 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_65_collision'><pose>-1.8 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_66_collision'><pose>-1.8 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_67_collision'><pose>0.0 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_68_collision'><pose>1.8 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_69_collision'><pose>1.8 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_70_collision'><pose>3.6 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_71_collision'><pose>3.6 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_72_collision'><pose>5.4 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_73_collision'><pose>5.4 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_74_collision'><pose>7.2 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_75_collision'><pose>7.2 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry></collision>
+        <collision name='wall_76_collision'><pose>-8.1 -7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_77_collision'><pose>8.1 -7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_78_collision'><pose>-8.1 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_79_collision'><pose>8.1 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_80_collision'><pose>-8.1 -3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_81_collision'><pose>8.1 -3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_82_collision'><pose>-8.1 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_83_collision'><pose>8.1 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_84_collision'><pose>-8.1 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_85_collision'><pose>8.1 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_86_collision'><pose>-8.1 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_87_collision'><pose>8.1 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_88_collision'><pose>-8.1 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_89_collision'><pose>8.1 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_90_collision'><pose>-8.1 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_91_collision'><pose>8.1 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_92_collision'><pose>-8.1 7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+        <collision name='wall_93_collision'><pose>8.1 7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry></collision>
+
+        <visual name='wall_0_visual'><pose>-6.3 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_1_visual'><pose>-6.3 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_2_visual'><pose>-6.3 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_3_visual'><pose>-4.5 -7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_4_visual'><pose>-4.5 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_5_visual'><pose>-4.5 7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_6_visual'><pose>-2.7 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_7_visual'><pose>-2.7 -3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_8_visual'><pose>-2.7 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_9_visual'><pose>-2.7 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_10_visual'><pose>-0.9 -7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_11_visual'><pose>-0.9 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_12_visual'><pose>0.9 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_13_visual'><pose>0.9 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_14_visual'><pose>0.9 7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_15_visual'><pose>2.7 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_16_visual'><pose>2.7 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_17_visual'><pose>2.7 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_18_visual'><pose>4.5 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_19_visual'><pose>4.5 -3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_20_visual'><pose>4.5 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_21_visual'><pose>4.5 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_22_visual'><pose>4.5 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_23_visual'><pose>6.3 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_24_visual'><pose>6.3 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_25_visual'><pose>6.3 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_26_visual'><pose>6.3 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_27_visual'><pose>6.3 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_28_visual'><pose>6.3 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_29_visual'><pose>-7.2 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_30_visual'><pose>-7.2 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_31_visual'><pose>-5.4 -6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_32_visual'><pose>-5.4 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_33_visual'><pose>-5.4 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_34_visual'><pose>-5.4 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_35_visual'><pose>-5.4 4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_36_visual'><pose>-3.6 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_37_visual'><pose>-3.6 -0.9 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_38_visual'><pose>-3.6 0.9 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_39_visual'><pose>-3.6 4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_40_visual'><pose>-3.6 6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_41_visual'><pose>-1.8 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_42_visual'><pose>-1.8 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_43_visual'><pose>-1.8 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_44_visual'><pose>-1.8 4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_45_visual'><pose>0.0 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_46_visual'><pose>0.0 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_47_visual'><pose>0.0 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_48_visual'><pose>1.8 -6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_49_visual'><pose>1.8 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_50_visual'><pose>1.8 2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_51_visual'><pose>1.8 6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_52_visual'><pose>3.6 -6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_53_visual'><pose>3.6 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_54_visual'><pose>3.6 0.9 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_55_visual'><pose>3.6 6.3 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_56_visual'><pose>5.4 -2.7 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_57_visual'><pose>5.4 0.9 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_58_visual'><pose>7.2 -4.5 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_59_visual'><pose>-7.2 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_60_visual'><pose>-7.2 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_61_visual'><pose>-5.4 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_62_visual'><pose>-5.4 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_63_visual'><pose>-3.6 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_64_visual'><pose>-3.6 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_65_visual'><pose>-1.8 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_66_visual'><pose>-1.8 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.24 0.24 0.30 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_67_visual'><pose>0.0 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_68_visual'><pose>1.8 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_69_visual'><pose>1.8 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_70_visual'><pose>3.6 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_71_visual'><pose>3.6 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.24 0.24 0.30 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_72_visual'><pose>5.4 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_73_visual'><pose>5.4 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_74_visual'><pose>7.2 -8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_75_visual'><pose>7.2 8.1 0.6 0 0 0</pose><geometry><box><size>1.8 0.2 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_76_visual'><pose>-8.1 -7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_77_visual'><pose>8.1 -7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_78_visual'><pose>-8.1 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_79_visual'><pose>8.1 -5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_80_visual'><pose>-8.1 -3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_81_visual'><pose>8.1 -3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_82_visual'><pose>-8.1 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_83_visual'><pose>8.1 -1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_84_visual'><pose>-8.1 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_85_visual'><pose>8.1 0.0 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_86_visual'><pose>-8.1 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_87_visual'><pose>8.1 1.8 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_88_visual'><pose>-8.1 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_89_visual'><pose>8.1 3.6 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_90_visual'><pose>-8.1 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_91_visual'><pose>8.1 5.4 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_92_visual'><pose>-8.1 7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+        <visual name='wall_93_visual'><pose>8.1 7.2 0.6 0 0 0</pose><geometry><box><size>0.2 1.8 1.2</size></box></geometry><material><ambient>0.18 0.18 0.22 1</ambient><diffuse>0.24 0.24 0.30 1</diffuse></material></visual>
+      </link>
+    </model>
+
+    <model name='maze_exit_marker'>
+      <static>true</static>
+      <pose>0 -8.0 0.011 0 0 0</pose>
+      <link name='exit_link'>
+        <visual name='exit_visual'>
+          <geometry><box><size>1.4 0.04 0.02</size></box></geometry>
+          <material><ambient>0.9 0.65 0.05 1</ambient><diffuse>0.9 0.65 0.05 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>
