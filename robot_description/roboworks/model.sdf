@@ -285,7 +285,7 @@
       </link>
 
       <link name="front_left_wheel_steering_link">
-        <pose>0.3187 0.131 0 0 0 0</pose>
+        <pose>0.3187 0.161 0 0 0 0</pose>
         <visual name="front_left_wheel_steering_link_visual">
           <pose>0 0 0 0 0 0</pose>
           <geometry>
@@ -302,7 +302,7 @@
       </link>
 
       <link name="front_right_wheel_steering_link">
-        <pose>0.3187 -0.131 0 0 0 0</pose>
+        <pose>0.3187 -0.161 0 0 0 0</pose>
         <visual name="front_right_wheel_steering_link_visual">
           <geometry>
             <cylinder>
@@ -555,7 +555,7 @@
         <right_joint>rear_right_wheel_joint</right_joint>
         <left_steering_joint>front_left_wheel_steering_joint</left_steering_joint>
         <right_steering_joint>front_right_wheel_steering_joint</right_steering_joint>
-        <kingpin_width>0.262</kingpin_width>
+        <kingpin_width>0.322</kingpin_width>
         <steering_limit>0.4</steering_limit>
         <wheel_base>0.3187</wheel_base>
         <wheel_separation>0.322</wheel_separation>
