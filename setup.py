@@ -43,6 +43,7 @@ setup(
             'cmd_vel_visualizer = scripts.cmd_vel_visualizer:main',
             'local_costmap_boundary_visualizer = scripts.local_costmap_boundary_visualizer:main',
             'slam_map_pointcloud_visualizer = scripts.slam_map_image_visualizer:main',
+            'interactive_drift_monitor = var_n7k_szakd.interactive_drift_monitor:main',
         ],
     },
 )

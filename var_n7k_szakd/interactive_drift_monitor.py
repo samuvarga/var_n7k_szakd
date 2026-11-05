@@ -1,6 +1,8 @@
 """Measure relative odometry drift against Gazebo ground truth."""
 
 import math
+import csv
+import os
 import threading
 import time
 from collections import deque
@@ -53,6 +55,10 @@ class InteractiveDriftMonitor(Node):
         self.declare_parameter('ground_truth_model', 'roboworks')
         self.declare_parameter('ground_truth_transform_index', 0)
         self.declare_parameter('ground_truth_sync_tolerance', 0.15)
+        self.declare_parameter('measure_filtered', True)
+        self.declare_parameter('measure_amcl', False)
+        self.declare_parameter('duration', 10.0)
+        self.declare_parameter('output_csv', '')
         self.ground_truth_model = self.get_parameter('ground_truth_model').value
         self.ground_truth_transform_index = self.get_parameter(
             'ground_truth_transform_index'
@@ -60,6 +66,10 @@ class InteractiveDriftMonitor(Node):
         self.ground_truth_sync_tolerance = self.get_parameter(
             'ground_truth_sync_tolerance'
         ).value
+        self.measure_filtered = self.get_parameter('measure_filtered').value
+        self.measure_amcl = self.get_parameter('measure_amcl').value
+        self.duration = float(self.get_parameter('duration').value)
+        self.output_csv = self.get_parameter('output_csv').value
         self.last_ground_truth_warning = 0.0
         self.anchor = None
         self.awaiting_initial_pose = False
@@ -68,6 +78,7 @@ class InteractiveDriftMonitor(Node):
         self.measurement_started_wall = None
         self.last_report_wall = 0.0
         self.last_path_poses = None
+        self.records = []
         self.path = {'gt': 0.0, 'raw': 0.0, 'filtered': 0.0, 'amcl': 0.0}
         self.stats = {
             name: {
@@ -180,7 +191,12 @@ class InteractiveDriftMonitor(Node):
 
     def _synchronized_poses_locked(self, stamp):
         synchronized = {'gt': self.latest['gt']}
-        for name in ('raw', 'filtered', 'amcl'):
+        required = ['raw']
+        if self.measure_filtered:
+            required.append('filtered')
+        if self.measure_amcl:
+            required.append('amcl')
+        for name in required:
             if not self.samples[name]:
                 return None
             closest_stamp, closest_pose = min(
@@ -253,6 +269,7 @@ class InteractiveDriftMonitor(Node):
         self.last_path_poses = synchronized.copy()
         self.awaiting_initial_pose = False
         self.measurement_started_wall = time.monotonic()
+        self.records.clear()
         print(
             'DRIFT MONITOR: MERES ELINDULT. '
             'A relativ hibat 3 masodpercenkent irom.',
@@ -262,7 +279,7 @@ class InteractiveDriftMonitor(Node):
     def update_path_locked(self, current_poses):
         for name in self.path:
             current = current_poses.get(name)
-            previous = self.last_path_poses[name]
+            previous = self.last_path_poses.get(name)
             if current is None or previous is None:
                 continue
             self.path[name] += math.hypot(
@@ -279,6 +296,8 @@ class InteractiveDriftMonitor(Node):
             angle_delta(ground_truth[2], ground_truth_anchor[2]),
         )
         for name, values in self.stats.items():
+            if name not in current_poses:
+                continue
             current = current_poses[name]
             current_anchor = self.anchor[name]
             current_relative = (
@@ -299,6 +318,36 @@ class InteractiveDriftMonitor(Node):
             values['final_error'] = error
             values['max_yaw'] = max(values['max_yaw'], yaw_error)
             values['samples'] += 1
+        self.records.append(self._record_locked(current_poses))
+
+    def _record_locked(self, current_poses):
+        elapsed = time.monotonic() - self.measurement_started_wall
+        record = {'time_s': elapsed}
+        ground_truth = current_poses['gt']
+        ground_truth_anchor = self.anchor['gt']
+        ground_truth_relative = (
+            ground_truth[0] - ground_truth_anchor[0],
+            ground_truth[1] - ground_truth_anchor[1],
+            angle_delta(ground_truth[2], ground_truth_anchor[2]),
+        )
+        for name in ('raw', 'filtered', 'amcl'):
+            if name not in current_poses:
+                continue
+            current = current_poses[name]
+            initial = self.anchor[name]
+            relative = (
+                current[0] - initial[0],
+                current[1] - initial[1],
+                angle_delta(current[2], initial[2]),
+            )
+            record[f'{name}_drift_m'] = math.hypot(
+                relative[0] - ground_truth_relative[0],
+                relative[1] - ground_truth_relative[1],
+            )
+            record[f'{name}_drift_yaw_deg'] = abs(math.degrees(
+                angle_delta(relative[2], ground_truth_relative[2])
+            ))
+        return record
 
     def report_locked(self, now):
         elapsed = now - self.measurement_started_wall
@@ -325,6 +374,17 @@ class InteractiveDriftMonitor(Node):
 
     def watchdog_loop(self):
         while rclpy.ok():
+            if (
+                self.measurement_started_wall is not None
+                and time.monotonic() - self.measurement_started_wall >= self.duration
+            ):
+                print(
+                    'DRIFT MONITOR: a %.1f masodperces meres veget ert.'
+                    % self.duration,
+                    flush=True,
+                )
+                rclpy.shutdown()
+                return
             if self.received_gt and time.monotonic() - self.last_gt_wall > 5.0:
                 print(
                     'DRIFT MONITOR: 5 masodperce nincs ground truth; '
@@ -334,6 +394,22 @@ class InteractiveDriftMonitor(Node):
                 rclpy.shutdown()
                 return
             time.sleep(1.0)
+
+    def write_csv(self):
+        if not self.output_csv or not self.records:
+            return
+        directory = os.path.dirname(os.path.abspath(self.output_csv))
+        os.makedirs(directory, exist_ok=True)
+        fieldnames = ['time_s']
+        for name in ('raw', 'filtered', 'amcl'):
+            for suffix in ('drift_m', 'drift_yaw_deg'):
+                if any(f'{name}_{suffix}' in record for record in self.records):
+                    fieldnames.append(f'{name}_{suffix}')
+        with open(self.output_csv, 'w', newline='', encoding='utf-8') as output:
+            writer = csv.DictWriter(output, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(self.records)
+        print('DRIFT MONITOR: CSV mentve: %s' % self.output_csv, flush=True)
 
     def print_summary(self):
         with self.lock:
@@ -371,6 +447,7 @@ class InteractiveDriftMonitor(Node):
             )
             print('elkuldott 2D Goal-ok: %d' % self.goal_count, flush=True)
             print('=================================', flush=True)
+            self.write_csv()
 
 
 def main():
