@@ -151,7 +151,7 @@ planner_server:
       terminal_checking_interval: 5000
       max_planning_time: 5.0
       motion_model_for_search: "DUBIN"
-      minimum_turning_radius: 0.65
+      minimum_turning_radius: 0.76
       smooth_path: true
       allow_primitive_interpolation: false
       cache_obstacle_heuristic: true
